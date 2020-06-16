@@ -1,0 +1,17 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+
+body{
+    font-size: 12px;
+    color: #000000;
+}
+
+a{
+    text-decoration: none;
+}
+
+em{
+    font-style: normal;
+}

@@ -1,11 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>传一科技—泡泡堂—登陆注册</title>
+    <link rel="stylesheet" href="./css/public.css"/>
+    <link rel="stylesheet" href="./css/index.css"/>
+    <link rel="stylesheet" href="./滑块验证/index.css"/>
 </head>
+
 <body>
-    
+    <div id="sing_on">
+        <div class="wrap">
+            <p><input type="text"></p>
+            <p><input type="password"></p>
+            <p><input type="button" value="登录"></p>
+            <p>没有账号？<a href="javascript:;">立即注册</a></p>
+        </div>
+    </div>
+
+    <div id="sing_up">
+        <div class="wrap">
+            <p><input type="text"></p>
+            <p><input type="password"></p>
+            <!-- <div class="dragSlide"></div> -->
+            <div class="dragSlide drag"></div>
+            <p><a href="javascript:;">立即登录</a></p>
+
+            <p><input type="button" value="注册"></p>
+        </div>
+
+    </div>
+
+    <script src="./js/jquery-3.4.1.js"></script>
+    <script src="./滑块验证/index.js"></script>
+    <script src="./js/index.js"></script>
+    <script>
+        // new DragSlide({
+        //     el: document.querySelector('.dragSlide'),
+        //     success: function(){
+        //        console.log('success!!!')
+               
+        //     }
+        // })
+        // new DragSlide({
+        //     el: document.querySelector('.drag'),
+        //     success: function(){
+        //        console.log('success!!!')
+        //     }
+        // })
+    </script>
 </body>
+
 </html>
