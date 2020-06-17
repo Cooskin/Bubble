@@ -11,24 +11,28 @@
 </head>
 
 <body>
-    <div id="sing_on">
+    <div id="sign_on">
         <div class="wrap">
-            <p><input type="text"></p>
-            <p><input type="password"></p>
-            <p><input type="button" value="登录"></p>
-            <p>没有账号？<a href="javascript:;">立即注册</a></p>
+            <h2>登&nbsp;录</h2>
+            <p></p>
+            <p><input type="text" placeholder="输入账号"></p>
+            <p><input type="password" placeholder="输入密码"></p>
+            <p><input type="button" value="登&nbsp;录" id="onbtn"></p>
+            <p class="jump">没有账号？&nbsp;<a href="javascript:;">立即注册</a></p>
         </div>
     </div>
 
-    <div id="sing_up">
+    <div id="sign_up" class="hide">
         <div class="wrap">
-            <p><input type="text"></p>
-            <p><input type="password"></p>
-            <!-- <div class="dragSlide"></div> -->
+            <h2>注&nbsp;册</h2>
+            <p></p>
+            <p><input type="text" placeholder="输入昵称"></p>
+            <p><input type="password" placeholder="输入密码"></p>
             <div class="dragSlide drag"></div>
-            <p><a href="javascript:;">立即登录</a></p>
+            <p><input type="button" value="注册" id="upbtn"></p>
+            <p class="jump">已有账号&nbsp;<a href="javascript:;">前往登录</a></p>
 
-            <p><input type="button" value="注册"></p>
+            
         </div>
 
     </div>
@@ -36,21 +40,7 @@
     <script src="./js/jquery-3.4.1.js"></script>
     <script src="./滑块验证/index.js"></script>
     <script src="./js/index.js"></script>
-    <script>
-        // new DragSlide({
-        //     el: document.querySelector('.dragSlide'),
-        //     success: function(){
-        //        console.log('success!!!')
-               
-        //     }
-        // })
-        // new DragSlide({
-        //     el: document.querySelector('.drag'),
-        //     success: function(){
-        //        console.log('success!!!')
-        //     }
-        // })
-    </script>
+    
 </body>
 
 </html>
