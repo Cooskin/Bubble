@@ -19,10 +19,28 @@ wss.on('connection', function (socket) {
         switch (oMsg.type) {
             case 'sign_on':
 
-            break;
+                break;
             case 'sign_up':
+                var sql = 'insert into tbluser (name,pwd) values(?,?)'
+                db.run(sql, [oMsg.name, oMsg.pwd], function (e) {
+                    console.log(e)
+                    if (e == null) {
+                        var sql2 = 'select acc from tbluser where name=? and pwd=?'
+                        db.get(sql2, [oMsg.name, oMsg.pwd], function (e, data) {
+                            if (e == null) {
+                                var obj = {
+                                    type: 'sign_up',
+                                    acc: data.acc
+                                }
+                                socket.send(JSON.stringify(obj));
+                            }
+                            console.log(data)
 
-            break;
+                        })
+                    }
+                })
+
+                break;
         }
 
 

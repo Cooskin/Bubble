@@ -10,11 +10,11 @@ html,body{
 
 .wrap {
     width: 500px;
-    height: 400px;
+    height: 500px;
     border: 2px solid #f90;
     margin: 100px auto;
     background: url('../images/bg1.png')no-repeat;
-    background-size: 100%;
+    background-size: 100% 100%;
 
 }
 
@@ -26,7 +26,7 @@ html,body{
     margin-top: 20px;
 }
 
-.wrap p:nth-child(1){
+.wrap p:nth-child(2){
     margin: 20px auto;
     height: 25px;
     text-indent: 150px;
@@ -46,11 +46,12 @@ input{
     border: none;
     border-radius: 4px;
     outline: none;
-    border: 1px solid transparent;
+    border: 2px solid transparent;
     background: rgba(250,250,250,0.4);
 }
 
 [type="button"]{
+    border: none;
     color: rgb(245, 241, 10);    
     font-size: 18px;
     background-color: rgba(5, 174, 253, 0.534);
