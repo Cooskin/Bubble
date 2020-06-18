@@ -1,13 +1,5 @@
 /*  */
 
-html,body{
-    height: 100%;
-}
-
-.hide{
-    display: none;
-}
-
 .wrap {
     width: 500px;
     height: 500px;

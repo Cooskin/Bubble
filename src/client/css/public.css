@@ -1,11 +1,23 @@
 *{
     margin: 0;
     padding: 0;
+    /* cursor: pointer; */
+}
+html,body{
+    height: 100%;
+}
+
+.hide{
+    display: none;
 }
 
 body{
     font-size: 14px;
     color: #000000;
+}
+
+ol,ul{
+    list-style: none;
 }
 
 a{
@@ -14,4 +26,8 @@ a{
 
 em{
     font-style: normal;
+}
+
+.cursor{
+    cursor: url(../images/arrow/jiantou3.ico),text;
 }

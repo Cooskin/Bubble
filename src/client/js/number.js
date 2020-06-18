@@ -23,3 +23,19 @@ function pwd(cont, obj, that) {
         that.css('border-color', '#11f111');
     }
 }
+
+$('.wrap,#sign_up,#sign_on,.cursor').mousedown(function () {
+    $(this).css('cursor', 'url(./images/arrow/jiantou2.ico),text')
+})
+$('.wrap,#sign_up,#sign_on,.cursor').mouseup(function () {
+    $(this).css('cursor', 'url(./images/arrow/jiantou3.ico),text')
+})
+
+$('.musicbtn').click(function () {
+    $(this).toggleClass('bg');
+    // classToggle()
+    // $(this).css({
+    //     'background-image': 'url(./images/hall/musicIco.png)',
+    //     'background-color': 'rgb(255,255,255)'
+    // })
+})

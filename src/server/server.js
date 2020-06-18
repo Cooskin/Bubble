@@ -18,6 +18,26 @@ wss.on('connection', function (socket) {
 
         switch (oMsg.type) {
             case 'sign_on':
+                var sql = 'select * from tbluser where acc=? and pwd=?';
+                db.get(sql, [oMsg.acc, oMsg.pwd], function (e, data) {
+                    if (e == null) {
+                        console.log(data)
+                        if (data == undefined) {
+                            var obj = {
+                                type: 'sign_on',
+                                state: 0
+                            }
+                        } else {
+                            var obj = {
+                                type: 'sign_on',
+                                name: data.name,
+                                acc: data.acc,
+                                state: 1
+                            }
+                        }
+                        socket.send(JSON.stringify(obj));
+                    }
+                })
 
                 break;
             case 'sign_up':
@@ -25,18 +45,13 @@ wss.on('connection', function (socket) {
                 db.run(sql, [oMsg.name, oMsg.pwd], function (e) {
                     console.log(e)
                     if (e == null) {
-                        var sql2 = 'select acc from tbluser where name=? and pwd=?'
-                        db.get(sql2, [oMsg.name, oMsg.pwd], function (e, data) {
-                            if (e == null) {
-                                var obj = {
-                                    type: 'sign_up',
-                                    acc: data.acc
-                                }
-                                socket.send(JSON.stringify(obj));
-                            }
-                            console.log(data)
 
-                        })
+                        var obj = {
+                            type: 'sign_up',
+                            acc: this.lastID
+                        }
+                        socket.send(JSON.stringify(obj));
+
                     }
                 })
 

@@ -7,8 +7,28 @@ ws.onopen = function () {
 ws.onmessage = function (msg) {
     var oMsg = JSON.parse(msg.data);
     if (oMsg.type == 'sign_up') {
-        alert('您的账号为：' + oMsg.acc);
-        $('#sign_on , #sign_up').toggle();
+
+    }
+    switch (oMsg.type) {
+        case 'sign_on':
+            if (oMsg.state) {
+                alert('登录成功');
+                var obj = {
+                    acc: oMsg.acc,
+                    pwd: oMsg.pwd
+                }
+                $('[type="text"],[type="password"]').val('');
+                sessionStorage.setItem('hx191110_log', JSON.stringify(obj))
+                location.href = 'hall.html';
+            } else {
+                alert('账号或密码有误')
+            }
+            break;
+        case 'sign_up':
+            alert('您的账号为：' + oMsg.acc);
+            $('[type="text"],[type="password"]').val('').css('border-color', 'transparent');
+            $('#sign_on , #sign_up').toggle();
+            break;
     }
 }
 
@@ -30,11 +50,7 @@ $('#sign_on a ,#sign_up a').click(function () {
 })
 
 
-/*
-
-*/
 var Space = /^[^\s]*$/;
-
 var $text = $('#sign_up p:first');
 
 $('#sign_up [type="text"]').blur(function () {
@@ -69,7 +85,9 @@ new DragSlide({
         sta = 1;
     }
 })
-
+/*
+登录
+*/
 $('#upbtn').click(function () {
     console.log($('#sign_up [placeholder="确认密码"],#sign_up [placeholder="输入密码"],#sign_up [type="text"]').css('border-color'))
 
@@ -89,3 +107,52 @@ $('#upbtn').click(function () {
     }
 })
 
+/*
+登录
+*/
+var $acc = $('#sign_on [type="text"]');
+var $pwd = $('#sign_on [type="password"]');
+var $text2 = $('#sign_on p:first');
+$('#onbtn').click(function () {
+
+    if ($acc.val().match(Space) == null || $pwd.val().match(Space) == null) {
+        $text2.html('不能输入空格');
+    } else {
+        if (parseInt($acc.val()) && $acc.val().length >= 5) {
+            var obj = {
+                type: 'sign_on',
+                acc: $acc.val(),
+                pwd: $pwd.val()
+            }
+            ws.send(JSON.stringify(obj))
+        } else {
+            $text2.html('账号格式错误');
+        }
+    }
+})
+
+$(document).keydown(function (e) {
+    console.log(!e)
+    console.log(e.keyCode)
+    console.log(e.which)
+    if (!e) {
+        e = window.event;
+    }
+    if ((e.keyCode || e.which) == 13) {
+        // $("#LoginIn").click();
+        if ($acc.val().match(Space) == null || $pwd.val().match(Space) == null) {
+            $text2.html('不能输入空格');
+        } else {
+            if (parseInt($acc.val()) && $acc.val().length >= 5) {
+                var obj = {
+                    type: 'sign_on',
+                    acc: $acc.val(),
+                    pwd: $pwd.val()
+                }
+                ws.send(JSON.stringify(obj))
+            } else {
+                $text2.html('账号格式错误');
+            }
+        }
+    }
+})
