@@ -1,33 +1,37 @@
-*{
+* {
     margin: 0;
     padding: 0;
     /* cursor: pointer; */
 }
-html,body{
+
+html,
+body {
     height: 100%;
 }
 
-.hide{
+.hide {
     display: none;
 }
 
-body{
+body {
     font-size: 14px;
     color: #000000;
+    min-height: 500px;
 }
 
-ol,ul{
+ol,
+ul {
     list-style: none;
 }
 
-a{
+a {
     text-decoration: none;
 }
 
-em{
+em {
     font-style: normal;
 }
 
-.cursor{
-    cursor: url(../images/arrow/jiantou3.ico),text;
+.cursor {
+    cursor: url(../images/arrow/jiantou3.ico), text;
 }
