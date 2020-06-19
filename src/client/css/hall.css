@@ -52,7 +52,8 @@
     top: 5px;
 }
 
-.exp {
+.exp,
+#chat {
     width: 100%;
     height: 100%;
     background: rgba(0, 0, 0, 0.6);
@@ -108,13 +109,18 @@
 .list_wrap span {
     display: inline-block;
     vertical-align: top;
+    font-size: 20px;
 }
 
 .list_wrap li {
-    /* width: 50px; */
     height: 100px;
     line-height: 100px;
     vertical-align: top;
+    margin-left: 18px;
+}
+
+.list_wrap li:hover {
+    background: rgba(175, 175, 175, 0.6);
 }
 
 
@@ -132,24 +138,29 @@
 
 .list_wrap ul::-webkit-scrollbar-thumb {
     border-radius: 10px;
-    -webkit-box-shadow: inset 0 0 5px rgb(190, 237, 82);
+    box-shadow: inset 0 0 5px rgb(190, 237, 82);
     background: rgb(190, 237, 82);
 }
 
 .list_wrap ul::-webkit-scrollbar-track {
-    -webkit-box-shadow: inset 0 0 5px rgba(255, 255, 255, 0.6);
-    border-radius: 10px;
-    background: rgba(255, 255, 255, 0.1);
-}
-
-.list_wrap ul::-webkit-scrollbar-track-piece {
-    width: 2px;
+    box-shadow: inset 0 0 5px rgba(255, 255, 255, 0.6);
     border-radius: 10px;
     background-color: rgba(255, 0, 0, 0.2);
 }
 
 
 /* 聊天大厅 */
+
+textarea {
+    margin: 0 auto;
+    line-height: 40px;
+    font-size: 18px;
+    padding: 2px;
+    display: block;
+    outline: none;
+    position: relative;
+    resize: none;
+}
 
 #foot {
     background: url(../images/hall/chatbg.png)no-repeat;
@@ -163,18 +174,92 @@
     border: 1px solid red;
 }
 
-.cont {
+#foot .cont {
     width: 300px;
     height: 130px;
     margin: 60px auto 0;
 }
 
-.edit {
-    width: 300px;
-    height: 40px;
-    margin: 0 auto;
-    display: block;
-    outline: none;
+#foot .edit {
+    width: 296px;
+    height: 36px;
+}
+
+#chat {
     position: relative;
-    resize: none;
+}
+
+#chat>a {
+    /* position: a  */
+}
+
+#chat h3 {
+    width: 600px;
+    height: 30px;
+    line-height: 30px;
+    margin: 20px auto 0;
+    background-color: rgb(255, 255, 255);
+}
+
+#chat .cont {
+    width: 600px;
+    height: 300px;
+    border: 1px solid red;
+    margin: 0 auto;
+    background-color: rgba(255, 255, 255, 0.6);
+}
+
+#chat .edit {
+    width: 596px;
+    height: 196px;
+}
+
+#chat button {
+    width: 50px;
+    position: absolute;
+    top: 520px;
+    right: 225px;
+}
+
+.user-image {
+    width: 65px;
+    height: 3px;
+}
+
+.main {
+    width: 430px;
+    height: 3px;
+}
+
+td {
+    position: relative;
+    width: 60px;
+    height: 60px;
+    text-align: left;
+}
+
+td img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    /* height: 60px; */
+    border-radius: 50%;
+    /* margin: 0 5px; */
+}
+
+td span {
+    max-width: 90%;
+    display: inline-block;
+    background-color: #fff;
+    padding: 10px;
+    margin-bottom: 10px;
+    word-break: break-all
+}
+
+
+/* tbody {} */
+
+tbody tr {
+    margin-bottom: 10px;
 }
