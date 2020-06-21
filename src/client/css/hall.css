@@ -5,12 +5,17 @@
     background: url(../images/bg3.png)no-repeat;
     background-size: 100% 100%;
     overflow: hidden;
-    position: relative;
+    /* position: relative; */
+}
+
+.in-out {
+    width: 100%;
+    float: left;
 }
 
 #sign_out {
     background: url(../images/return2.png)no-repeat;
-    right: 0;
+    margin-left: 30px;
 }
 
 .wrap .bg {
@@ -21,8 +26,6 @@
 .musicbtn {
     border-radius: 50%;
     background: url(../images/hall/stopMusic.png)no-repeat;
-    right: 200px;
-    top: 3px;
 }
 
 #sign_out,
@@ -31,11 +34,12 @@
     width: 50px;
     height: 50px;
     background-size: 100%;
-    position: absolute;
+    margin: 10px;
+    float: right;
 }
 
 .musicbtn:hover {
-    top: 6px;
+    background-size: 104%;
 }
 
 #sign_out:hover {
@@ -44,7 +48,7 @@
 
 #btn {
     float: right;
-    margin: 100px 100px 0 0;
+    margin: 30px 100px 0 0;
 }
 
 #btn img:hover {
@@ -52,24 +56,24 @@
     top: 5px;
 }
 
-.exp,
-#chat {
+.exp {
     width: 100%;
     height: 100%;
     background: rgba(0, 0, 0, 0.6);
     text-align: center;
-    position: absolute;
+    position: relative;
 }
 
 .exp a {
     position: absolute;
     display: block;
-    width: 40px;
-    height: 40px;
-    background: url(../images/return.png);
+    width: 30px;
+    height: 30px;
+    background: url(../images/return.png)no-repeat;
     background-size: 100%;
-    right: 125px;
-    top: 10px;
+    right: 205px;
+    top: 65px;
+    z-index: 1;
     border-radius: 50%;
     border: 2px solid transparent;
 }
@@ -80,6 +84,10 @@
 
 .exp img {
     margin-top: 30px;
+    position: absolute;
+    width: 600px;
+    top: 30px;
+    left: 200px;
 }
 
 .list_wrap {
@@ -153,13 +161,13 @@
 
 textarea {
     margin: 0 auto;
-    line-height: 40px;
+    line-height: 20px;
     font-size: 18px;
     padding: 2px;
     display: block;
     outline: none;
-    position: relative;
     resize: none;
+    border: none;
 }
 
 #foot {
@@ -170,55 +178,117 @@ textarea {
     background-size: 100% 100%;
 }
 
-#foot div {
-    border: 1px solid red;
+#foot .foot_wrap {
+    width: 300px;
+    margin: 60px auto 0;
 }
 
 #foot .cont {
     width: 300px;
-    height: 130px;
-    margin: 60px auto 0;
+    height: 100px;
+    background-color: rgb(231, 231, 231);
 }
 
 #foot .edit {
     width: 296px;
-    height: 36px;
+    height: 65px;
 }
 
-#chat {
+.text {
     position: relative;
 }
 
-#chat>a {
-    /* position: a  */
+.text button {
+    position: absolute;
+    bottom: 4px;
+    right: 6px;
 }
 
-#chat h3 {
+#chat {
+    width: 100%;
+    height: 100%;
+    background: rgba(70, 70, 70, 0.6);
+}
+
+.head {
+    position: relative;
+}
+
+.chat_wrap {
+    position: absolute;
+    margin: 20px 180px 0;
+}
+
+.info_wrap {
+    position: relative;
+    margin: 0 auto;
+}
+
+.head h3 {
     width: 600px;
     height: 30px;
     line-height: 30px;
-    margin: 20px auto 0;
+    text-align: center;
+    margin: 0 auto;
     background-color: rgb(255, 255, 255);
+    /* position: relative; */
+}
+
+.head a {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 30px;
+    height: 30px;
+    background: url(../images/return.png)no-repeat;
+    background-size: 100%;
 }
 
 #chat .cont {
     width: 600px;
     height: 300px;
-    border: 1px solid red;
     margin: 0 auto;
     background-color: rgba(255, 255, 255, 0.6);
 }
 
-#chat .edit {
-    width: 596px;
-    height: 196px;
+.info_wrap .edit {
+    width: 580px;
+    height: 146px;
+    padding: 0 10px;
+    line-height: 20px;
 }
 
-#chat button {
+.info_wrap .edit::-webkit-scrollbar,
+#foot .edit::-webkit-scrollbar {
+    width: 8px;
+}
+
+.info_wrap .edit::-webkit-scrollbar-thumb,
+#foot .edit::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    box-shadow: inset 0 0 5px rgb(189, 189, 189);
+    background: rgb(189, 189, 189);
+}
+
+.info_wrap .edit::-webkit-scrollbar-track,
+#foot .edit::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 5px rgba(255, 255, 255, 0.6);
+    border-radius: 10px;
+    background-color: rgba(255, 0, 0, 0.2);
+}
+
+.btn_wrap {
+    background: #fff;
+    position: relative;
+    width: 100%;
+    height: 50px;
+}
+
+.info_wrap button {
     width: 50px;
     position: absolute;
-    top: 520px;
-    right: 225px;
+    bottom: 18px;
+    right: 28px;
 }
 
 .user-image {

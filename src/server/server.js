@@ -11,6 +11,7 @@ var server = ws.Server;
 var wss = new server({ port: 1711 });
 console.log('服务器 f')
 
+var socketAry = [];
 
 wss.on('connection', function(socket) {
     socket.on('message', function(msg) {
@@ -43,7 +44,6 @@ wss.on('connection', function(socket) {
             case 'sign_up':
                 var sql = 'insert into tbluser (name,pwd) values(?,?)'
                 db.run(sql, [oMsg.name, oMsg.pwd], function(e) {
-                    console.log(e)
                     if (e == null) {
 
                         var obj = {
@@ -65,7 +65,7 @@ wss.on('connection', function(socket) {
                         db.all(sql2, [], function(e, data) {
                             if (e == null) {
 
-                                console.log(data)
+                                // console.log(data)
                                 if (data !== undefined) {
                                     var obj = {
                                         type: 'log',
@@ -79,6 +79,54 @@ wss.on('connection', function(socket) {
                         })
                     }
                 })
+                break;
+            case 'laoke':
+                var acc = oMsg.userAcc;
+                var condition = 1;
+                for (let i = 0; i < socketAry.length; i++) {
+                    if (acc == socketAry[i].acc) {
+                        condition = 0;
+                    }
+                }
+                if (condition == 1) {
+                    var userObj = {
+                            acc: acc,
+                            socketd: socket
+                        }
+                        // console.log(condition)
+                    socketAry.push(userObj);
+                    // console.log(socketAry)
+
+                }
+
+
+                // var sql = `select q.*,f.listNumber,f.listName
+                // from qqFriend f,qqRecUser q
+                // where f.userAcc = ? and f.friendAcc = q.acc`;
+                // db.all(sql, [acc], function(e, data) {
+                //     var obj = {
+                //         type: 'laoke',
+                //         content: { data: data }
+                //     }
+                //     socket.send(JSON.stringify(obj));
+                // })
+                break;
+            case 'news':
+
+                for (let i = 0; i < socketAry.length; i++) {
+                    if (socketAry[i].acc == oMsg.receiver) {
+
+                        var obj = {
+                            type: 'news',
+                            sender: oMsg.sender,
+                            receiver: oMsg.receiver,
+                            info: oMsg.info
+                        }
+
+                        socketAry[i].socketd.send(JSON.stringify(obj))
+                    }
+                }
+                break;
         }
 
 

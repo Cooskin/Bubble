@@ -12,10 +12,13 @@
 
 <body>
     <div class="wrap cursor">
-        <!-- 推出登录 -->
-        <a id="sign_out" class="cursor" href="javascript:;" title="退出登录"></a>
-        <!-- 音乐 -->
-        <a class="musicbtn cursor" href="javascript:;"></a>
+        <div class="in-out">
+            <!-- 推出登录 -->
+            <a id="sign_out" class="cursor" href="javascript:;" title="退出登录"></a>
+            <!-- 音乐 -->
+            <a class="musicbtn cursor" href="javascript:;"></a>
+        </div>
+
         <!-- 在线列表 -->
         <div class="list_wrap">
             <h3>在线列表</h3>
@@ -33,48 +36,65 @@
             <p><img class="expbtn" src="./images/hall/explainbtn.png" alt=""></p>
         </div>
 
+        <!--  -->
         <div id="foot">
-            <div class="cont"></div>
-            <textarea maxlength="36" class="edit"></textarea>
+            <div class="foot_wrap">
+                <div class="cont"></div>
+                <div class="text">
+                    <textarea class="sursor" maxlength="36" class="edit"></textarea>
+                    <button class="sursor">发送</button>
+                </div>
+            </div>
+
         </div>
         <div class="exp hide">
             <a href="javascript:;" class="cursor"></a>
             <img src="./images/hall/explain.png" alt="">
         </div>
+        <!-- 私聊窗口 -->
         <div id="chat" class="hide">
-            <h3>昵称</h3>
-            <a href="javascript:;">out</a>
-            <div class="cont">
-                <table>
-                    <thead>
-                        <tr>
-                            <th class="user-image"></th>
-                            <th class="main"></th>
-                            <th class="user-image"></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><img src="./images/character/bzt1.png" alt=""></td>
-                            <td><span>哒哒哒哒哒d</span></td>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <td></td>
-                            <td><span>1啊啊啊啊啊啊啊啊啊a</span></td>
-                            <td><img src="./images/character/bzt1.png" alt=""></td>
-                        </tr>
-                    </tbody>
-                </table>
+            <div class="chat_wrap">
+                <div class="head">
+                    <h3>昵称</h3>
+                    <a href="javascript:;" class="cursor"></a>
+                </div>
+                <div class="cont">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th class="user-image"></th>
+                                <th class="main"></th>
+                                <th class="user-image"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><img src="./images/character/bzt1.png" alt=""></td>
+                                <td><span>哒哒哒哒哒d</span></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td><span>1啊啊啊啊啊啊啊啊啊a</span></td>
+                                <td><img src="./images/character/bzt1.png" alt=""></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="info_wrap">
+                    <textarea class="edit sursor"></textarea>
+                    <div class=" btn_wrap ">
+                        <button class="cursor ">发送</button>
+                    </div>
+                </div>
             </div>
-            <textarea class="edit"></textarea>
-            <button class="cursor">发送</button>
+
         </div>
     </div>
-    <script src="./js/jquery-3.4.1.js"></script>
-    <script src="./js/data.js"></script>
-    <script src="./js/number.js"></script>
-    <script src="./js/hall.js"></script>
+    <script src="./js/jquery-3.4.1.js "></script>
+    <script src="./js/data.js "></script>
+    <script src="./js/number.js "></script>
+    <script src="./js/hall.js "></script>
 </body>
 
 </html>
