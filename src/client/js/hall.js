@@ -17,6 +17,8 @@ $(function() {
 /*
 
 */
+var user = JSON.parse(sessionStorage.getItem('hx191110_log'))
+
 var ws = new WebSocket("ws://localhost:1711");
 ws.onopen = function() {
     console.log("与服务器建立连接...");
@@ -24,31 +26,12 @@ ws.onopen = function() {
         location.href = 'index.html'
     }
 
-    // var obj = {
-    //     type: 'laoke',
-    //     userAcc: useracc.acc
-    // }
-    // ws.send(JSON.stringify(obj));
-
-    var user = JSON.parse(sessionStorage.getItem('hx191110_log'))
     var obj = {
         type: 'log',
         acc: user.acc
     }
     ws.send(JSON.stringify(obj));
-
-    if (socket.readyState === 1) {
-        window.onload = function() {
-            var obj = {
-                type: 'laoke',
-                userAcc: useracc.acc
-            }
-            ws.send(JSON.stringify(obj));
-        }
-    }
-
 }
-
 
 
 $('.head a').click(function() {
@@ -74,10 +57,20 @@ ws.onmessage = function(msg) {
                 $(this).attr('acc', oMsg.data[i].acc);
             })
             $list.find('li').dblclick(function() {
+                $('tbody').html('');
                 var $span = $(this).find('span')
                 var accUnm = $(this).find('span').attr('acc')
                 $('#chat').toggle().find('h3').html($span.html()).attr('he', accUnm);
             })
+            break;
+
+        case 'news':
+            console.log(oMsg.info)
+                // if () {
+
+            // }
+
+            pirent(user.acc, oMsg.sender, oMsg.receiver, oMsg.info, allImage[oMsg.roleid])
             break;
     }
 }
@@ -87,11 +80,9 @@ ws.onmessage = function(msg) {
 // 私聊
 
 
-
-
 $('.btn_wrap button').click(function() {
     var sendInfo = $('.info_wrap .edit').val();
-    var sender = useracc.acc
+    var sender = user.acc
     var receiver = parseInt($('.head>h3').attr('he'));
     // if (receiver == undefined) {
     //     alert('你找谁聊天呢？')
@@ -110,7 +101,7 @@ $('.btn_wrap button').click(function() {
     }
     ws.send(JSON.stringify(obj))
 
-    // $('#text').val('');
+    $('.info_wrap .edit').val('');
     // head(obj, ret);
 })
 
@@ -123,12 +114,31 @@ function pirent(user, sender, receiver, info, img) {
     iSpan.html(info);
     if (user == sender) {
         rTd.html(img);
-        iSpan.css('float', 'right')
+        iSpan.css({ 'float': 'right', 'background-color': '#6cff6c' })
     } else if (user == receiver) {
         lTd.html(img);
     }
     mTd.append(iSpan)
     aTr.append(lTd, mTd, rTd);
     $('tbody').append(aTr);
-    console.log(aTr);
 }
+
+/*
+    推出登录
+
+    状态为0，
+    本地存储删除，
+    // socket删除，
+    修改列表。
+
+*/
+
+
+
+$('#sign_out').click(function() {
+    var acc = user.acc;
+    var obj = {
+        type: 'out';
+        acc: acc
+    }
+})

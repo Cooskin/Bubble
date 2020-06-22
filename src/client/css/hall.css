@@ -245,6 +245,7 @@ textarea {
 }
 
 #chat .cont {
+    overflow: auto;
     width: 600px;
     height: 300px;
     margin: 0 auto;
@@ -327,8 +328,9 @@ td span {
     word-break: break-all
 }
 
-
-/* tbody {} */
+tbody {
+    overflow: auto;
+}
 
 tbody tr {
     margin-bottom: 10px;

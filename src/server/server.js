@@ -58,6 +58,27 @@ wss.on('connection', function(socket) {
                 break;
 
             case 'log':
+
+                var acc = oMsg.acc;
+                var condition = 1;
+                for (let i = 0; i < socketAry.length; i++) {
+                    if (acc == socketAry[i].acc) {
+                        condition = 0;
+                        var obj = {
+                            acc: acc,
+                            socketd: socket
+                        }
+                        socketAry.splice(i, 1, obj);
+                    }
+                }
+                if (condition == 1) {
+                    var userObj = {
+                        acc: acc,
+                        socketd: socket
+                    }
+                    socketAry.push(userObj);
+                }
+
                 var sql = 'update tbluser set state = 1 where acc = ?'
                 db.run(sql, oMsg.acc, function(e) {
                     if (e == null) {
@@ -65,7 +86,6 @@ wss.on('connection', function(socket) {
                         db.all(sql2, [], function(e, data) {
                             if (e == null) {
 
-                                // console.log(data)
                                 if (data !== undefined) {
                                     var obj = {
                                         type: 'log',
@@ -81,24 +101,6 @@ wss.on('connection', function(socket) {
                 })
                 break;
             case 'laoke':
-                var acc = oMsg.userAcc;
-                var condition = 1;
-                for (let i = 0; i < socketAry.length; i++) {
-                    if (acc == socketAry[i].acc) {
-                        condition = 0;
-                    }
-                }
-                if (condition == 1) {
-                    var userObj = {
-                            acc: acc,
-                            socketd: socket
-                        }
-                        // console.log(condition)
-                    socketAry.push(userObj);
-                    // console.log(socketAry)
-
-                }
-
 
                 // var sql = `select q.*,f.listNumber,f.listName
                 // from qqFriend f,qqRecUser q
@@ -113,19 +115,38 @@ wss.on('connection', function(socket) {
                 break;
             case 'news':
 
-                for (let i = 0; i < socketAry.length; i++) {
-                    if (socketAry[i].acc == oMsg.receiver) {
-
-                        var obj = {
-                            type: 'news',
-                            sender: oMsg.sender,
-                            receiver: oMsg.receiver,
-                            info: oMsg.info
+                var sql = 'select roleid from tbluser where acc = ?';
+                db.get(sql, [oMsg.sender], function(e, data) {
+                    if (e == null) {
+                        if (oMsg.sender == oMsg.receiver) {
+                            var obj = {
+                                type: 'news',
+                                roleid: data.roleid,
+                                sender: oMsg.sender,
+                                receiver: oMsg.receiver,
+                                info: oMsg.info
+                            }
+                            socket.send(JSON.stringify(obj));
+                            return;
                         }
+                        for (let i = 0; i < socketAry.length; i++) {
 
-                        socketAry[i].socketd.send(JSON.stringify(obj))
+                            if (socketAry[i].acc == oMsg.receiver) {
+
+                                var obj = {
+                                    type: 'news',
+                                    roleid: data.roleid,
+                                    sender: oMsg.sender,
+                                    receiver: oMsg.receiver,
+                                    info: oMsg.info
+                                }
+                                socketAry[i].socketd.send(JSON.stringify(obj));
+                                socket.send(JSON.stringify(obj));
+                            }
+                        }
                     }
-                }
+                })
+
                 break;
         }
 
