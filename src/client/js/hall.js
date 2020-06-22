@@ -65,12 +65,25 @@ ws.onmessage = function(msg) {
             break;
 
         case 'news':
-            console.log(oMsg.info)
-                // if () {
-
-            // }
-
             pirent(user.acc, oMsg.sender, oMsg.receiver, oMsg.info, allImage[oMsg.roleid])
+            break;
+
+        case 'chat_all':
+            // $('.cont span em').html()
+            if (user.name == oMsg.name) {
+                var str = `<div>
+                <span><em class="me">` + oMsg.name + `</em>：</span>
+                <span>` + oMsg.info + `</span>
+            </div>`;
+            } else {
+                var str = `<div>
+                <span><em>` + oMsg.name + `</em>：</span>
+                <span>` + oMsg.info + `</span>
+            </div>`;
+            }
+
+            $('#foot .cont').append(str);
+
             break;
     }
 }
@@ -80,14 +93,11 @@ ws.onmessage = function(msg) {
 // 私聊
 
 
-$('.btn_wrap button').click(function() {
+$('.info_wrap button').click(function() {
     var sendInfo = $('.info_wrap .edit').val();
     var sender = user.acc
     var receiver = parseInt($('.head>h3').attr('he'));
-    // if (receiver == undefined) {
-    //     alert('你找谁聊天呢？')
-    //     return;
-    // }
+
     if (!$.trim(sendInfo)) {
         alert('发送内容不能为空');
         return;
@@ -102,7 +112,6 @@ $('.btn_wrap button').click(function() {
     ws.send(JSON.stringify(obj))
 
     $('.info_wrap .edit').val('');
-    // head(obj, ret);
 })
 
 function pirent(user, sender, receiver, info, img) {
@@ -123,6 +132,26 @@ function pirent(user, sender, receiver, info, img) {
     $('tbody').append(aTr);
 }
 
+
+//  群聊
+
+$('.text button').click(function() {
+    var $text = $('.text .edit')
+    if ($text.val() == '') {
+        alert('输入点内容吧');
+    } else {
+        var obj = {
+            type: 'chat_all',
+            sender: user.acc,
+            info: $text.val()
+        }
+        ws.send(JSON.stringify(obj));
+    }
+    $text.val('')
+})
+
+
+
 /*
     推出登录
 
@@ -138,7 +167,7 @@ function pirent(user, sender, receiver, info, img) {
 $('#sign_out').click(function() {
     var acc = user.acc;
     var obj = {
-        type: 'out';
+        type: 'out',
         acc: acc
     }
 })

@@ -100,21 +100,27 @@ wss.on('connection', function(socket) {
                     }
                 })
                 break;
-            case 'laoke':
+            case 'chat_all':
 
-                // var sql = `select q.*,f.listNumber,f.listName
-                // from qqFriend f,qqRecUser q
-                // where f.userAcc = ? and f.friendAcc = q.acc`;
-                // db.all(sql, [acc], function(e, data) {
-                //     var obj = {
-                //         type: 'laoke',
-                //         content: { data: data }
-                //     }
-                //     socket.send(JSON.stringify(obj));
-                // })
+                var sql = 'select name from tbluser where acc = ?'
+
+                db.get(sql, oMsg.sender, function(e, data) {
+                    if (e == null) {
+                        var obj = {
+                            type: 'chat_all',
+                            name: data.name,
+                            info: oMsg.info
+                        }
+                        for (let i = 0; i < socketAry.length; i++) {
+                            // if (socketAry[i].acc == oMsg.sender) { }
+                            socketAry[i].socketd.send(JSON.stringify(obj));
+                        }
+                    }
+                })
+
                 break;
             case 'news':
-
+                // 私聊
                 var sql = 'select roleid from tbluser where acc = ?';
                 db.get(sql, [oMsg.sender], function(e, data) {
                     if (e == null) {

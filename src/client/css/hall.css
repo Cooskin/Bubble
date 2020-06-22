@@ -96,7 +96,7 @@
     width: 300px;
     height: 380px;
     background-size: 100%;
-    margin: 50px 0 0 50px;
+    margin: -55px 0 0 50px;
 }
 
 .list_wrap h3 {
@@ -172,30 +172,49 @@ textarea {
 
 #foot {
     background: url(../images/hall/chatbg.png)no-repeat;
-    width: 500px;
+    width: 615px;
     height: 280px;
     float: right;
     background-size: 100% 100%;
 }
 
 #foot .foot_wrap {
-    width: 300px;
+    width: 370px;
     margin: 60px auto 0;
 }
 
 #foot .cont {
-    width: 300px;
+    width: 100%;
     height: 100px;
     background-color: rgb(231, 231, 231);
 }
 
+.con div {
+    margin: 10px 0;
+}
+
+#foot div span {
+    display: inline-block;
+    vertical-align: top;
+    max-width: 250px;
+}
+
+#foot div span:nth-last-child(1) {
+    color: blue;
+}
+
 #foot .edit {
-    width: 296px;
-    height: 65px;
+    width: 364px;
+    height: 48px;
 }
 
 .text {
     position: relative;
+}
+
+.text .btn_wrap {
+    width: 100%;
+    height: 28px;
 }
 
 .text button {
@@ -205,6 +224,7 @@ textarea {
 }
 
 #chat {
+    position: relative;
     width: 100%;
     height: 100%;
     background: rgba(70, 70, 70, 0.6);
@@ -255,7 +275,7 @@ textarea {
 .info_wrap .edit {
     width: 580px;
     height: 146px;
-    padding: 0 10px;
+    padding: 5px 10px;
     line-height: 20px;
 }
 

@@ -36,6 +36,10 @@ em {
     cursor: url(../images/arrow/jiantou3.ico), text;
 }
 
+.me {
+    color: red;
+}
+
 .of::-webkit-scrollbar {
     width: 8px;
 }
