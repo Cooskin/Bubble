@@ -77,9 +77,10 @@ wss.on('connection', function(socket) {
                         socketd: socket
                     }
                     socketAry.push(userObj);
+
                 }
 
-                var sql = 'update tbluser set state = 1 where acc = ?'
+                var sql = 'update tbluser set state = 1 where acc = ?';
                 db.run(sql, oMsg.acc, function(e) {
                     if (e == null) {
                         var sql2 = 'select acc,name,roleid from tbluser where state = 1'
@@ -92,11 +93,28 @@ wss.on('connection', function(socket) {
                                         data: data
 
                                     }
-
-                                    socket.send(JSON.stringify(obj));
+                                    if (socketAry.length > 0) {
+                                        for (let i = 0; i < socketAry.length; i++) {
+                                            socketAry[i].socketd.send(JSON.stringify(obj));
+                                        }
+                                    }
                                 }
                             }
                         })
+
+                    }
+                })
+                var sql3 = ' select name from tbluser where acc = ?'
+                db.get(sql3, oMsg.acc, function(e, data) {
+                    var log = {
+                        type: 'login_tips',
+                        name: data.name
+                    }
+
+                    if (socketAry.length > 0) {
+                        for (let i = 0; i < socketAry.length; i++) {
+                            socketAry[i].socketd.send(JSON.stringify(log));
+                        }
                     }
                 })
                 break;
@@ -150,6 +168,43 @@ wss.on('connection', function(socket) {
                                 socket.send(JSON.stringify(obj));
                             }
                         }
+                    }
+                })
+
+                break;
+
+            case 'out':
+
+                for (let i = 0; i < socketAry.length; i++) {
+                    if (oMsg.acc == socketAry[i].acc) {
+                        socketAry.splice(i, 1);
+                    }
+                }
+
+                var sql = 'update tbluser set state = 0 where acc = ?';
+                db.run(sql, oMsg.acc, function(e) {
+                    if (e == null) {
+                        var sql2 = 'select acc,name,roleid from tbluser where state = 1'
+                        db.all(sql2, [], function(e, data) {
+                            if (e == null) {
+
+                                if (data !== undefined) {
+                                    var obj = {
+                                        type: 'out',
+                                        name: oMsg.name,
+                                        data: data
+
+                                    }
+                                    console.log(obj)
+                                    if (socketAry.length > 0) {
+                                        for (let i = 0; i < socketAry.length; i++) {
+                                            socketAry[i].socketd.send(JSON.stringify(obj));
+                                        }
+                                    }
+                                }
+                            }
+                        })
+
                     }
                 })
 

@@ -57,15 +57,32 @@ ws.onmessage = function(msg) {
                 $(this).attr('acc', oMsg.data[i].acc);
             })
             $list.find('li').dblclick(function() {
-                $('tbody').html('');
+                if ($(this).attr('class') == undefined) {
+                    $('tbody').html('');
+                }
                 var $span = $(this).find('span')
                 var accUnm = $(this).find('span').attr('acc')
                 $('#chat').toggle().find('h3').html($span.html()).attr('he', accUnm);
+                $(this).removeClass('tips')
             })
             break;
 
         case 'news':
             pirent(user.acc, oMsg.sender, oMsg.receiver, oMsg.info, allImage[oMsg.roleid])
+            console.log(user.acc == oMsg.receiver)
+            if (user.acc == oMsg.receiver) {
+
+                $('.list_wrap li').each(function() {
+                    var $acc = $(this).find('span').attr('acc')
+
+                    if ($acc == oMsg.sender) {
+                        if ($('#chat').css('display') == 'none') {
+                            $(this).addClass('tips');
+                        }
+                    }
+                })
+            }
+
             break;
 
         case 'chat_all':
@@ -84,6 +101,37 @@ ws.onmessage = function(msg) {
 
             $('#foot .cont').append(str);
 
+            break;
+
+        case 'login_tips':
+            var str = `<div>
+                <span><em class="me">系统提示</em>：</span>
+                <span>` + `玩家"` + oMsg.name + `"已上线` + `</span>
+            </div>`;
+            $('#foot .cont').append(str);
+            break;
+
+        case 'out':
+            var $list = $('.list_wrap ul');
+            var len = oMsg.data.length;
+            var str = '';
+            for (let i = 0; i < len; i++) {
+                str += `<li>` +
+                    allImage[oMsg.data[i].roleid] + `<span>` +
+                    oMsg.data[i].name + `</span>
+                        </li>`;
+
+            }
+            $list.html(str);
+            $list.find('span').each(function(i) {
+                $(this).attr('acc', oMsg.data[i].acc);
+            })
+
+            var str = `<div>
+                <span><em class="me">系统提示</em>：</span>
+                <span>` + `玩家"` + oMsg.name + `"已下线` + `</span>
+            </div>`;
+            $('#foot .cont').append(str);
             break;
     }
 }
@@ -130,6 +178,7 @@ function pirent(user, sender, receiver, info, img) {
     mTd.append(iSpan)
     aTr.append(lTd, mTd, rTd);
     $('tbody').append(aTr);
+
 }
 
 
@@ -168,6 +217,10 @@ $('#sign_out').click(function() {
     var acc = user.acc;
     var obj = {
         type: 'out',
-        acc: acc
+        acc: acc,
+        name: user.name
     }
+    ws.send(JSON.stringify(obj));
+    sessionStorage.removeItem('hx191110_log');
+    location.href = 'index.html';
 })

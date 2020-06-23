@@ -1,3 +1,5 @@
+/* reset */
+
 * {
     margin: 0;
     padding: 0;
@@ -32,12 +34,23 @@ em {
     font-style: normal;
 }
 
+button {
+    outline: none;
+}
+
 .cursor {
     cursor: url(../images/arrow/jiantou3.ico), text;
 }
 
 .me {
     color: red;
+}
+
+
+/* 滚动条 */
+
+.of {
+    overflow: auto;
 }
 
 .of::-webkit-scrollbar {
@@ -54,4 +67,31 @@ em {
     box-shadow: inset 0 0 5px rgba(255, 255, 255, 0.6);
     border-radius: 10px;
     background-color: rgba(255, 0, 0, 0.2);
+}
+
+
+/* tips */
+
+.tips::after {
+    content: '';
+    border-radius: 50%;
+    background: #f40;
+    width: 10px;
+    height: 10px;
+    float: right;
+    margin: 15px;
+}
+
+.fl {
+    float: left;
+}
+
+.fr {
+    float: right;
+}
+
+.clear::after {
+    content: '';
+    display: block;
+    clear: both;
 }
