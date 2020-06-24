@@ -53,8 +53,31 @@ img {
     font-size: 0;
 }
 
+.befor,
+.after {
+    position: relative;
+}
+
 .befor img,
 .after img {
     width: 100%;
     height: 100%;
+    position: absolute;
+}
+
+.befor [type="1"],
+.after [type="1"] {
+    z-index: 2;
+}
+
+.befor [type="2"],
+.after [type="2"] {
+    z-index: 3;
+    top: -20px;
+}
+
+.befor [type="3"],
+.after [type="3"] {
+    z-index: 1;
+    top: 20px;
 }

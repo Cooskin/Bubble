@@ -209,8 +209,56 @@ wss.on('connection', function(socket) {
                 })
 
                 break;
+
+            case 'dress':
+                // 打印角色和服饰
+                var sql = `select c.img 
+                from tbluser u,tblcostume c
+                where u.acc = ?
+                group by img
+                having u.roleid = c.id or u.cap = c.id or u.win = c.id `;
+                var sql2 = 'select * from tblcostume'
+                db.all(sql, oMsg.acc, function(e, data) {
+                    if (e == null) {
+                        console.log(data);
+                        db.all(sql2, [], function(er, data2) {
+                            if (er == null) {
+                                var obj = {
+                                    type: 'dress',
+                                    user: data,
+                                    data: data2
+                                }
+                                socket.send(JSON.stringify(obj));
+                            }
+                        })
+                    }
+                })
+                break;
+            case 'arr':
+                // allImage   hastImage   wingImage
+                var data = oMsg.data;
+                var sql = 'update tblcostume set img = ? where id = ?'
+                var numarr = [1, 7, 13];
+                var i = 0;
+                for (j in data) {
+                    arr(sql, data[j], numarr[i]);
+                    i++
+                }
+
+                break;
         }
 
 
     })
 })
+
+function arr(sql, obj, num) {
+    console.log(num)
+    console.log(obj)
+    console.log(sql)
+    for (let i = 0; i < obj.length; i++) {
+        db.run(sql, [obj[i], num + i], function(e) {
+            console.log('修改成功')
+        })
+    }
+}

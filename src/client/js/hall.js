@@ -17,7 +17,7 @@ $(function() {
 /*
 
 */
-var user = JSON.parse(sessionStorage.getItem('hx191110_log'))
+var user = JSON.parse(sessionStorage.getItem('hx191110_log'));
 
 var ws = new WebSocket("ws://localhost:1711");
 ws.onopen = function() {
