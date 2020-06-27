@@ -195,7 +195,6 @@ wss.on('connection', function(socket) {
                                         data: data
 
                                     }
-                                    console.log(obj)
                                     if (socketAry.length > 0) {
                                         for (let i = 0; i < socketAry.length; i++) {
                                             socketAry[i].socketd.send(JSON.stringify(obj));
@@ -210,6 +209,19 @@ wss.on('connection', function(socket) {
 
                 break;
 
+            case 'refesh':
+
+                var sql = `upd'ate tbluser 
+                        set roleid = ? ,cap = ?,win = ? 
+                        where acc = ?`;
+                db.run(sql, [oMsg.roleid, oMsg.cap, oMsg.win, oMsg.acc], function(e) {
+                    console.log(e);
+                    if (e == null) {
+                        console.log('修改成功')
+                    }
+                })
+                break;
+
             case 'dress':
                 // 打印角色和服饰
                 var sql = `select c.img 
@@ -220,7 +232,6 @@ wss.on('connection', function(socket) {
                 var sql2 = 'select * from tblcostume'
                 db.all(sql, oMsg.acc, function(e, data) {
                     if (e == null) {
-                        console.log(data);
                         db.all(sql2, [], function(er, data2) {
                             if (er == null) {
                                 var obj = {

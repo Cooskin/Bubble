@@ -11,6 +11,10 @@ $(function() {
     })
 })
 
+$('.toUser').click(function() {
+    location.href = 'user.html';
+})
+
 // var useracc = JSON.parse(sessionStorage.getItem('hx191110_log'));
 
 
@@ -47,7 +51,7 @@ ws.onmessage = function(msg) {
             var str = '';
             for (let i = 0; i < len; i++) {
                 str += `<li>` +
-                    allImage[oMsg.data[i].roleid] + `<span>` +
+                    allImage[oMsg.data[i].roleid - 1] + `<span>` +
                     oMsg.data[i].name + `</span>
                     </li>`;
 
@@ -210,8 +214,6 @@ $('.text button').click(function() {
     修改列表。
 
 */
-
-
 
 $('#sign_out').click(function() {
     var acc = user.acc;

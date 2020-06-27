@@ -1,0 +1,34 @@
+.wrap {
+    background: url(../images/game/bg6.png);
+    width: 1000px;
+    height: 100vh;
+    margin: 0 auto;
+    background-size: 100% 100%;
+}
+
+.btn ul {
+    width: 244px;
+    margin: 0 auto;
+    display: none;
+}
+
+.btn ul li {
+    position: relative;
+    height: 115px;
+}
+
+.btn .back:hover img,
+.btn .room:hover img,
+.btn .start:hover img {
+    position: absolute;
+    top: 2px;
+}
+
+#room {
+    width: 600px;
+    margin: 0 auto;
+    height: 400px;
+    background: rgba(255, 255, 255, 0.6);
+    position: absolute;
+    top: 60px;
+}
