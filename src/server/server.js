@@ -268,6 +268,21 @@ wss.on('connection', function(socket) {
 
                 }
 
+                var sql = `select * from tblroom`;
+                db.all(sql, [], function(e, data) {
+                    if (e == null) {
+                        var obj = {
+                            type: 'roomlist',
+                            data: data
+                        }
+
+                        console.log(obj)
+                        for (let i = 0; i < gameSocket.length; i++) {
+                            gameSocket[i].socketd.send(JSON.stringify(obj))
+                        }
+                    }
+                })
+
                 break;
 
             case 'room':
@@ -281,8 +296,14 @@ wss.on('connection', function(socket) {
                         var sql2 = `select * from tblroom`;
                         db.all(sql2, [], function(e, data) {
                             if (e == null) {
+                                var obj = {
+                                    type: 'room',
+                                    data: data
+                                }
+
+                                console.log(obj)
                                 for (let i = 0; i < gameSocket.length; i++) {
-                                    gameSocket[i].socket.send(JSON.stringify(data))
+                                    gameSocket[i].socketd.send(JSON.stringify(obj))
                                 }
                             }
                         })

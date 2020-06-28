@@ -55,4 +55,57 @@ $(function() {
     })
 
 
+    ws.onmessage = function(msg) {
+        var oMsg = JSON.parse(msg.data);
+        switch (oMsg.type) {
+
+            case 'roomlist':
+                var data = oMsg.data;
+                var str = ``;
+                for (let i = 0; i < data.length; i++) {
+                    var num = 1;
+                    if (data[i].user2acc != null) {
+                        num = 2;
+                    }
+                    str += `<li>
+                        ` + map[data[i].map - 1] + `
+                        <span class="rname" title="` + data[i].roomname + `">` + data[i].roomname + `</span>
+                        <div class="info_wrap">
+                            <span class="state">` + data[i].state + `</span>
+                            <em class="num">` + num + `</em><em>/2</em>
+                        </div>
+                    </li>`;
+                }
+                console.log(str)
+                $('.room_list ul').html(str);
+                break;
+
+            case 'room':
+                console.log(oMsg)
+                var data = oMsg.data;
+                var str = ``;
+                for (let i = 0; i < data.length; i++) {
+                    var num = 1;
+                    if (data[i].user2acc != null) {
+                        num = 2;
+                    }
+                    str += `<li>
+                        ` + map[data[i].map - 1] + `
+                        <span class="rname" title="` + data[i].roomname + `">` + data[i].roomname + `</span>
+                        <div class="info_wrap">
+                            <span class="state">` + data[i].state + `</span>
+                            <em class="num">` + num + `</em><em>/2</em>
+                        </div>
+                    </li>`;
+                }
+                console.log(str)
+                $('.room_list ul').html(str);
+
+
+                break;
+            case '':
+                break;
+        }
+    }
+
 })
