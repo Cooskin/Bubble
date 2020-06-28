@@ -11,17 +11,25 @@ $(function() {
     })
 })
 
+/* 前往角色换装 */
 $('.toUser').click(function() {
     location.href = 'user.html';
 })
 
-// var useracc = JSON.parse(sessionStorage.getItem('hx191110_log'));
+/*  */
+$('.game').click(function() {
+    location.href = 'game.html'
+})
 
 
 /*
 
 */
 var user = JSON.parse(sessionStorage.getItem('hx191110_log'));
+
+if (user == null) {
+    location.href = 'index.html';
+}
 
 var ws = new WebSocket("ws://localhost:1711");
 ws.onopen = function() {

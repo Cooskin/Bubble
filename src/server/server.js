@@ -12,6 +12,7 @@ var wss = new server({ port: 1711 });
 console.log('服务器 f')
 
 var socketAry = [];
+var gameSocket = [];
 
 wss.on('connection', function(socket) {
     socket.on('message', function(msg) {
@@ -240,6 +241,49 @@ wss.on('connection', function(socket) {
                                     data: data2
                                 }
                                 socket.send(JSON.stringify(obj));
+                            }
+                        })
+                    }
+                })
+                break;
+            case 'gamelog':
+                var acc = oMsg.acc;
+                var condition = 1;
+                for (let i = 0; i < gameSocket.length; i++) {
+                    if (acc == gameSocket[i].acc) {
+                        condition = 0;
+                        var obj = {
+                            acc: acc,
+                            socketd: socket
+                        }
+                        gameSocket.splice(i, 1, obj);
+                    }
+                }
+                if (condition == 1) {
+                    var userObj = {
+                        acc: acc,
+                        socketd: socket
+                    }
+                    gameSocket.push(userObj);
+
+                }
+
+                break;
+
+            case 'room':
+                var data = oMsg.data;
+                var sql = `insert into tblroom
+                            (roomname,user1acc,map)
+                            values(?,?,?)`;
+                db.run(sql, [data.roomName, data.user1, data.map], function(e) {
+                    if (e == null) {
+                        console.log('添加成功');
+                        var sql2 = `select * from tblroom`;
+                        db.all(sql2, [], function(e, data) {
+                            if (e == null) {
+                                for (let i = 0; i < gameSocket.length; i++) {
+                                    gameSocket[i].socket.send(JSON.stringify(data))
+                                }
                             }
                         })
                     }
