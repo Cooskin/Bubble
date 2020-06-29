@@ -132,9 +132,9 @@ $('#onbtn').click(function() {
 })
 
 $(document).keydown(function(e) {
-    console.log(!e)
-    console.log(e.keyCode)
-    console.log(e.which)
+    // console.log(!e)
+    // console.log(e.keyCode)
+    // console.log(e.which)
     if (!e) {
         e = window.event;
     }

@@ -7,6 +7,7 @@ var db = new sqlite3.Database('./db/bubble.db', sqlite3.OPEN_READWRITE, function
 })
 
 var ws = require('ws');
+const { Socket } = require('dgram');
 var server = ws.Server;
 var wss = new server({ port: 1711 });
 console.log('服务器 f')
@@ -19,6 +20,10 @@ wss.on('connection', function(socket) {
         var oMsg = JSON.parse(msg);
 
         switch (oMsg.type) {
+
+            /**
+             * 登录 
+             */
             case 'sign_on':
                 var sql = 'select * from tbluser where acc=? and pwd=?';
                 db.get(sql, [oMsg.acc, oMsg.pwd], function(e, data) {
@@ -42,6 +47,11 @@ wss.on('connection', function(socket) {
                 })
 
                 break;
+
+                /**
+                 * 注册 
+                 * 存储数据
+                 */
             case 'sign_up':
                 var sql = 'insert into tbluser (name,pwd) values(?,?)'
                 db.run(sql, [oMsg.name, oMsg.pwd], function(e) {
@@ -58,8 +68,12 @@ wss.on('connection', function(socket) {
 
                 break;
 
+                /**
+                 * 存储游戏大厅socket
+                 * 修改登录状态
+                 * 用户上线提醒
+                 */
             case 'log':
-
                 var acc = oMsg.acc;
                 var condition = 1;
                 for (let i = 0; i < socketAry.length; i++) {
@@ -79,8 +93,22 @@ wss.on('connection', function(socket) {
                     }
                     socketAry.push(userObj);
 
-                }
+                    var sql3 = ' select name from tbluser where acc = ?'
+                    db.get(sql3, oMsg.acc, function(e, data) {
+                        if (e == null) {
+                            var log = {
+                                type: 'login_tips',
+                                name: data.name
+                            }
+                            if (socketAry.length > 0) {
+                                for (let i = 0; i < socketAry.length; i++) {
+                                    socketAry[i].socketd.send(JSON.stringify(log));
+                                }
+                            }
+                        }
+                    })
 
+                }
                 var sql = 'update tbluser set state = 1 where acc = ?';
                 db.run(sql, oMsg.acc, function(e) {
                     if (e == null) {
@@ -92,8 +120,8 @@ wss.on('connection', function(socket) {
                                     var obj = {
                                         type: 'log',
                                         data: data
-
                                     }
+
                                     if (socketAry.length > 0) {
                                         for (let i = 0; i < socketAry.length; i++) {
                                             socketAry[i].socketd.send(JSON.stringify(obj));
@@ -105,24 +133,15 @@ wss.on('connection', function(socket) {
 
                     }
                 })
-                var sql3 = ' select name from tbluser where acc = ?'
-                db.get(sql3, oMsg.acc, function(e, data) {
-                    var log = {
-                        type: 'login_tips',
-                        name: data.name
-                    }
 
-                    if (socketAry.length > 0) {
-                        for (let i = 0; i < socketAry.length; i++) {
-                            socketAry[i].socketd.send(JSON.stringify(log));
-                        }
-                    }
-                })
                 break;
+
+                /**
+                 * 群聊
+                 */
+
             case 'chat_all':
-
                 var sql = 'select name from tbluser where acc = ?'
-
                 db.get(sql, oMsg.sender, function(e, data) {
                     if (e == null) {
                         var obj = {
@@ -131,19 +150,23 @@ wss.on('connection', function(socket) {
                             info: oMsg.info
                         }
                         for (let i = 0; i < socketAry.length; i++) {
-                            // if (socketAry[i].acc == oMsg.sender) { }
                             socketAry[i].socketd.send(JSON.stringify(obj));
                         }
                     }
                 })
 
                 break;
+
+                /**
+                 * 私聊
+                 */
             case 'news':
-                // 私聊
                 var sql = 'select roleid from tbluser where acc = ?';
                 db.get(sql, [oMsg.sender], function(e, data) {
                     if (e == null) {
+
                         if (oMsg.sender == oMsg.receiver) {
+
                             var obj = {
                                 type: 'news',
                                 roleid: data.roleid,
@@ -151,6 +174,7 @@ wss.on('connection', function(socket) {
                                 receiver: oMsg.receiver,
                                 info: oMsg.info
                             }
+
                             socket.send(JSON.stringify(obj));
                             return;
                         }
@@ -174,14 +198,16 @@ wss.on('connection', function(socket) {
 
                 break;
 
+                /**
+                 * 退出登录
+                 * 用户下线提醒
+                 */
             case 'out':
-
                 for (let i = 0; i < socketAry.length; i++) {
                     if (oMsg.acc == socketAry[i].acc) {
                         socketAry.splice(i, 1);
                     }
                 }
-
                 var sql = 'update tbluser set state = 0 where acc = ?';
                 db.run(sql, oMsg.acc, function(e) {
                     if (e == null) {
@@ -210,9 +236,12 @@ wss.on('connection', function(socket) {
 
                 break;
 
+                /**
+                 * 保存个人中心服饰
+                 */
             case 'refesh':
 
-                var sql = `upd'ate tbluser 
+                var sql = `update tbluser 
                         set roleid = ? ,cap = ?,win = ? 
                         where acc = ?`;
                 db.run(sql, [oMsg.roleid, oMsg.cap, oMsg.win, oMsg.acc], function(e) {
@@ -223,8 +252,10 @@ wss.on('connection', function(socket) {
                 })
                 break;
 
+                /**
+                 * 打印角色和服饰
+                 */
             case 'dress':
-                // 打印角色和服饰
                 var sql = `select c.img 
                 from tbluser u,tblcostume c
                 where u.acc = ?
@@ -246,6 +277,11 @@ wss.on('connection', function(socket) {
                     }
                 })
                 break;
+
+                /**
+                 * 存储游戏房间的socket
+                 * 打印房间列表
+                 */
             case 'gamelog':
                 var acc = oMsg.acc;
                 var condition = 1;
@@ -276,7 +312,6 @@ wss.on('connection', function(socket) {
                             data: data
                         }
 
-                        console.log(obj)
                         for (let i = 0; i < gameSocket.length; i++) {
                             gameSocket[i].socketd.send(JSON.stringify(obj))
                         }
@@ -285,6 +320,10 @@ wss.on('connection', function(socket) {
 
                 break;
 
+                /**
+                 * 存储创建的房间
+                 * 更新打印房间列表
+                 */
             case 'room':
                 var data = oMsg.data;
                 var sql = `insert into tblroom
@@ -292,24 +331,78 @@ wss.on('connection', function(socket) {
                             values(?,?,?)`;
                 db.run(sql, [data.roomName, data.user1, data.map], function(e) {
                     if (e == null) {
+                        var roomid = this.lastID;
                         console.log('添加成功');
                         var sql2 = `select * from tblroom`;
                         db.all(sql2, [], function(e, data) {
                             if (e == null) {
                                 var obj = {
                                     type: 'room',
+                                    rid: roomid,
                                     data: data
                                 }
 
-                                console.log(obj)
                                 for (let i = 0; i < gameSocket.length; i++) {
-                                    gameSocket[i].socketd.send(JSON.stringify(obj))
+                                    gameSocket[i].socketd.send(JSON.stringify(obj));
                                 }
                             }
                         })
                     }
                 })
+
+                var sql3 = `select c.img 
+                from tbluser u,tblcostume c
+                where u.acc = ?
+                group by img
+                having u.roleid = c.id or u.cap = c.id or u.win = c.id `;
+                db.all(sql3, [data.user1], function(e, data2) {
+                    if (e == null) {
+                        var obj = {
+                            type: 'ruser',
+                            data: data2
+                        }
+                        socket.send(JSON.stringify(obj));
+                    }
+                })
+
                 break;
+
+                /**
+                 * 删除房间的socket
+                 */
+            case 'cls':
+                for (let i = 0; i < gameSocket.length; i++) {
+                    if (gameSocket[i].acc == oMsg.acc) {
+                        gameSocket.splice(i, 1)
+                    }
+                }
+                break;
+
+                /**
+                 * 删除大厅的socket
+                 */
+            case 'clschat':
+                for (let i = 0; i < socketAry.length; i++) {
+                    if (socketAry[i].acc == oMsg.acc) {
+                        socketAry.splice(i, 1)
+                    }
+                }
+                break;
+
+                /**
+                 * 退出房间
+                 */
+            case 'clsroom':
+                sql = 'delete from tblroom where roomid = ?;'
+
+                db.run(sql, [oMsg.rid], function(e) {
+                    if (e == null) {
+                        console.log('删除成功')
+                    }
+                })
+
+                break;
+
             case 'arr':
                 // allImage   hastImage   wingImage
                 var data = oMsg.data;

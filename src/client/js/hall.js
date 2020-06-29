@@ -18,7 +18,13 @@ $('.toUser').click(function() {
 
 /*  */
 $('.game').click(function() {
-    location.href = 'game.html'
+    var obj = {
+        type: 'clschat',
+        acc: user.acc
+    }
+    ws.send(JSON.stringify(obj));
+
+    location.href = 'game.html';
 })
 
 

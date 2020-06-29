@@ -24,6 +24,10 @@ $(function() {
     $('.cont li').click(function() {
         $(this).css('border-color', 'rgb(255,0,0)').siblings().css('border-color', 'transparent')
         var roomName = prompt('输入房间名');
+        if (roomName == '' || roomName == null) {
+            alert('房间名不能为空');
+        }
+        console.log(roomName)
         var map = $(this).find('img').attr('oid');
         var obj = {
             type: 'room',
@@ -34,8 +38,22 @@ $(function() {
             }
         }
         ws.send(JSON.stringify(obj));
-        console.log(obj);
 
+        $('.wrap').hide();
+        $('.pkk').show();
+
+    })
+
+    /* 退出房间 */
+    $('.pkk > button').click(function() {
+        $(this).parent().toggle();
+        $('.wrap').show();
+
+        var obj = {
+            type: 'clsroom',
+            rid: $('.pkk').attr('rid')
+        }
+        ws.send(JSON.stringify(obj));
     })
 
     /* 关闭选图 */
@@ -51,6 +69,11 @@ $(function() {
 
     /* 返回游戏大厅 */
     $('.back').click(function() {
+        var obj = {
+            type: 'cls',
+            acc: user.acc
+        }
+        ws.send(JSON.stringify(obj));
         location.href = 'hall.html';
     })
 
@@ -76,7 +99,7 @@ $(function() {
                         </div>
                     </li>`;
                 }
-                console.log(str)
+                // console.log(str)
                 $('.room_list ul').html(str);
                 break;
 
@@ -98,9 +121,16 @@ $(function() {
                         </div>
                     </li>`;
                 }
-                console.log(str)
+
                 $('.room_list ul').html(str);
 
+                $('.pkk').attr('rid', oMsg.rid);
+                break;
+            case 'ruser':
+                var data = oMsg.data;
+                for (let i = 0; i < data.length; i++) {
+                    $('.user1').append(data[i].img);
+                }
 
                 break;
             case '':

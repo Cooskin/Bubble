@@ -29,9 +29,9 @@ $(function() {
         // ws.send(JSON.stringify(arr));
     }
 
-    $('.list-btn button').each(function() {
-        $(this).attr('type', )
-    })
+    // $('.list-btn button').each(function() {
+    //     $(this).attr('type', )
+    // })
 
     ws.onmessage = function(msg) {
         var oMsg = JSON.parse(msg.data);

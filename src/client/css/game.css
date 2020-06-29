@@ -124,3 +124,75 @@
     float: right;
     margin-top: 26px;
 }
+
+.pkk {
+    width: 1000px;
+    height: 100vh;
+    margin: 0 auto;
+    background: url(../images/game/bg8.png)no-repeat;
+    background-size: 100% 100%;
+    position: relative;
+}
+
+.pkk>button {
+    font-family: serif;
+    font-size: 20px;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 6px;
+    background: #fdec00;
+    margin: 10px 20px 0 0;
+}
+
+.user_wrap {
+    width: 800px;
+    position: absolute;
+    bottom: 50px;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+}
+
+.user_wrap button {
+    font-size: 20px;
+    font-weight: 600;
+    background: #fdec00;
+    padding: 10px 30px;
+    border: 1px solid #8e8e8e;
+    border-radius: 28px;
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+}
+
+.user_wrap div {
+    border: 1px solid red;
+    width: 200px;
+    height: 200px;
+    position: relative;
+}
+
+.user1 img,
+.user2 img {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+}
+
+.user1 [type="1"],
+.user2 [type="1"] {
+    z-index: 2;
+}
+
+.user1 [type="2"],
+.user2 [type="2"] {
+    z-index: 3;
+    top: -20px;
+}
+
+.user1 [type="3"],
+.user2 [type="3"] {
+    z-index: 1;
+    top: 20px;
+}
