@@ -28,7 +28,7 @@ wss.on('connection', function(socket) {
                 var sql = 'select * from tbluser where acc=? and pwd=?';
                 db.get(sql, [oMsg.acc, oMsg.pwd], function(e, data) {
                     if (e == null) {
-                        console.log(data)
+                        // console.log(data)
                         if (data == undefined) {
                             var obj = {
                                 type: 'sign_on',
@@ -304,19 +304,81 @@ wss.on('connection', function(socket) {
 
                 }
 
-                var sql = `select * from tblroom`;
-                db.all(sql, [], function(e, data) {
-                    if (e == null) {
-                        var obj = {
-                            type: 'roomlist',
-                            data: data
-                        }
+                /*
+                进入界面或者刷新界面
+                    到数据库（删）该用户存在的房间里的账号
+                    判断空间（删）
+                    反馈，打印列表 √
+                */
 
-                        for (let i = 0; i < gameSocket.length; i++) {
-                            gameSocket[i].socketd.send(JSON.stringify(obj))
+
+                // `select roomid
+                //  from room 
+                //  where user1acc = ? or user2acc = ?`;
+
+
+                var sqlarr = [
+                    'update tblroom set user1acc = 0 where user1acc = ?',
+                    'update tblroom set user2acc = 0 where user2acc = ?'
+                ]
+
+                for (let i = 0; i < sqlarr.length; i++) {
+                    db.run(sqlarr[i], [acc], function(er) {
+                        // console.log(er)
+                        if (er == null) {
+                            // console.log('kanbiao');
+                            // console.log(1);
                         }
+                    })
+                }
+
+                var sql2 = `select roomid
+                            from tblroom 
+                            where user1acc = 0 and user2acc = 0`;
+                var sql3 = `delete from tblroom 
+                            where roomid = ?`;
+                db.all(sql2, [], function(er2, data2) {
+                    // console.log(er)
+                    if (er2 == null) {
+                        console.log(data2);
+
+                        for (let i = 0; i < data2.length; i++) {
+                            db.run(sql3, [data2[i].roomid], function(err) {
+                                if (err == null) {
+                                    console.log('dle');
+                                }
+                            })
+                        }
+                        var sql = `select * from tblroom`;
+                        db.all(sql, [], function(e, data) {
+                            if (e == null) {
+                                var obj = {
+                                    type: 'roomlist',
+                                    data: data
+                                }
+                                console.log(data)
+
+                                for (let i = 0; i < gameSocket.length; i++) {
+                                    gameSocket[i].socketd.send(JSON.stringify(obj))
+                                }
+                            }
+                        })
                     }
                 })
+
+                // var sql = `select * from tblroom`;
+                // db.all(sql, [], function(e, data) {
+                //     if (e == null) {
+                //         var obj = {
+                //             type: 'roomlist',
+                //             data: data
+                //         }
+
+                //         for (let i = 0; i < gameSocket.length; i++) {
+                //             gameSocket[i].socketd.send(JSON.stringify(obj))
+                //         }
+                //     }
+                // })
 
                 break;
 
@@ -341,7 +403,7 @@ wss.on('connection', function(socket) {
                                     rid: roomid,
                                     data: data
                                 }
-
+                                console.log(data)
                                 for (let i = 0; i < gameSocket.length; i++) {
                                     gameSocket[i].socketd.send(JSON.stringify(obj));
                                 }
@@ -393,16 +455,56 @@ wss.on('connection', function(socket) {
                  * 退出房间
                  */
             case 'clsroom':
-                sql = 'delete from tblroom where roomid = ?;'
 
-                db.run(sql, [oMsg.rid], function(e) {
-                    if (e == null) {
-                        console.log('删除成功')
+                // if()
+                var sql3 = `select user1acc,user2acc 
+                            from tblroom 
+                            where roomid = ?`;
+
+                db.get(sql3, [oMsg.rid], function(err, data2) {
+                    if (err == null) {
+                        console.log(data2);
+                        var num = 0;
+                        for (i in data2) {
+                            if (data2[i] == null) {
+                                num + 1;
+                            }
+                        }
+                        if (num == 0) {
+                            var sql = 'delete from tblroom where roomid = ?;'
+                            db.run(sql, [oMsg.rid], function(e) {
+                                if (e == null) {
+                                    console.log('删除成功');
+                                    var sql2 = `select * from tblroom`;
+                                    db.all(sql2, [], function(er, data) {
+                                        if (er == null) {
+                                            var obj = {
+                                                type: 'reroom',
+                                                data: data
+                                            }
+
+                                            for (let i = 0; i < gameSocket.length; i++) {
+                                                gameSocket[i].socketd.send(JSON.stringify(obj));
+                                            }
+                                        }
+                                    })
+                                }
+                            })
+                        }
                     }
                 })
 
                 break;
+            case 'add':
 
+                var sql = `select * from tblroom where roomid = ?`;
+                db.get(sql, [oMsg.rid], function(e, data) {
+                    if (e == null) {
+
+                    }
+                })
+
+                break;
             case 'arr':
                 // allImage   hastImage   wingImage
                 var data = oMsg.data;
