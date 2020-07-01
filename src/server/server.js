@@ -340,7 +340,7 @@ wss.on('connection', function(socket) {
                 db.all(sql2, [], function(er2, data2) {
                     // console.log(er)
                     if (er2 == null) {
-                        console.log(data2);
+                        // console.log(data2);
 
                         for (let i = 0; i < data2.length; i++) {
                             db.run(sql3, [data2[i].roomid], function(err) {
@@ -353,10 +353,10 @@ wss.on('connection', function(socket) {
                         db.all(sql, [], function(e, data) {
                             if (e == null) {
                                 var obj = {
-                                    type: 'roomlist',
-                                    data: data
-                                }
-                                console.log(data)
+                                        type: 'roomlist',
+                                        data: data
+                                    }
+                                    // console.log(data)
 
                                 for (let i = 0; i < gameSocket.length; i++) {
                                     gameSocket[i].socketd.send(JSON.stringify(obj))
@@ -399,11 +399,11 @@ wss.on('connection', function(socket) {
                         db.all(sql2, [], function(e, data) {
                             if (e == null) {
                                 var obj = {
-                                    type: 'room',
-                                    rid: roomid,
-                                    data: data
-                                }
-                                console.log(data)
+                                        type: 'room',
+                                        rid: roomid,
+                                        data: data
+                                    }
+                                    // console.log(data)
                                 for (let i = 0; i < gameSocket.length; i++) {
                                     gameSocket[i].socketd.send(JSON.stringify(obj));
                                 }
@@ -466,43 +466,135 @@ wss.on('connection', function(socket) {
                         console.log(data2);
                         var num = 0;
                         for (i in data2) {
-                            if (data2[i] == null) {
-                                num + 1;
+                            if (data2[i] != 0) {
+                                num += 1;
                             }
                         }
+
+                        // var sql4 = `update tblroom set `
+                        var sqlarr = [
+                            'update tblroom set user1acc = 0 where user1acc = ?',
+                            'update tblroom set user2acc = 0 where user2acc = ?'
+                        ]
+
+                        for (let i = 0; i < sqlarr.length; i++) {
+                            db.run(sqlarr[i], [oMsg.user], function(we) {})
+                        }
+
+
                         if (num == 0) {
                             var sql = 'delete from tblroom where roomid = ?;'
                             db.run(sql, [oMsg.rid], function(e) {
                                 if (e == null) {
                                     console.log('删除成功');
-                                    var sql2 = `select * from tblroom`;
-                                    db.all(sql2, [], function(er, data) {
-                                        if (er == null) {
-                                            var obj = {
-                                                type: 'reroom',
-                                                data: data
-                                            }
-
-                                            for (let i = 0; i < gameSocket.length; i++) {
-                                                gameSocket[i].socketd.send(JSON.stringify(obj));
-                                            }
-                                        }
-                                    })
                                 }
                             })
                         }
+
+                        var sql2 = `select * from tblroom`;
+                        db.all(sql2, [], function(er, data) {
+                            if (er == null) {
+                                var obj = {
+                                    type: 'reroom',
+                                    data: data
+                                }
+
+                                for (let i = 0; i < gameSocket.length; i++) {
+                                    gameSocket[i].socketd.send(JSON.stringify(obj));
+                                }
+                            }
+                        })
                     }
                 })
 
                 break;
             case 'add':
-
                 var sql = `select * from tblroom where roomid = ?`;
                 db.get(sql, [oMsg.rid], function(e, data) {
                     if (e == null) {
+                        var userarr = [data.user1acc, data.user2acc]
 
+                        if (data.user1acc == 0) {
+                            var sql2 = `update tblroom set user1acc = ? where roomid = ?`;
+                            userarr.splice(0, 1, oMsg.acc)
+                        } else if (data.user2acc == 0) {
+                            var sql2 = `update tblroom set user2acc = ? where roomid = ?`;
+                            userarr.splice(1, 1, oMsg.acc)
+                        }
+                        db.run(sql2, [oMsg.acc, data.roomid], function(er) {
+                            if (e == null) {
+
+                                console.log('加入成功')
+
+                                var sql4 = `select c.img 
+                                from tbluser u,tblcostume c
+                                where u.acc = ?
+                                group by img
+                                having u.roleid = c.id or u.cap = c.id or u.win = c.id `;
+                                var flag = 0;
+                                var arr = [];
+                                var key;
+
+                                for (let i = 0; i < userarr.length; i++) {
+                                    if (i == 0) {
+                                        key = 'user1acc';
+                                    } else if (i == 1) {
+                                        key = 'user2acc';
+                                    }
+                                    db.all(sql4, [userarr[i]], function(e, data1) {
+                                        if (e == null) {
+
+
+                                            var p = {
+                                                acc: userarr[i],
+                                                // user: i,
+                                                user: key,
+                                                data: data1
+                                            }
+
+                                            arr.push(p);
+
+                                            var obj = {
+                                                type: 'ruser',
+                                                rid: oMsg.rid,
+                                                userarr: userarr,
+                                                data: arr
+                                            }
+                                            if (flag) {
+                                                for (let i = 0; i < gameSocket.length; i++) {
+                                                    console.log(obj)
+                                                    gameSocket[i].socketd.send(JSON.stringify(obj));
+
+                                                }
+                                            }
+                                            flag += 1
+                                                // socket.send(JSON.stringify(obj));
+                                        }
+                                    })
+
+                                }
+
+
+                                // 刷新列表
+                                var sql3 = `select * from tblroom`;
+                                db.all(sql3, [], function(er, data2) {
+                                    if (er == null) {
+                                        var obj = {
+                                            type: 'reroom',
+                                            rid: oMsg.rid,
+                                            data: data2
+                                        }
+
+                                        for (let i = 0; i < gameSocket.length; i++) {
+                                            gameSocket[i].socketd.send(JSON.stringify(obj));
+                                        }
+                                    }
+                                })
+                            }
+                        })
                     }
                 })
+
 
                 break;
             case 'arr':

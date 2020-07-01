@@ -46,6 +46,7 @@ $(function() {
         }
         ws.send(JSON.stringify(obj));
 
+        $('.user1').attr('acc', user.acc);
         $('.wrap').hide();
         $('.pkk').show();
 
@@ -148,7 +149,21 @@ $(function() {
                 break;
             case 'ruser':
                 var data = oMsg.data;
+                var $rid = $('.pkk').attr('rid');
+                if ($rid == oMsg.rid) {
+                    console.log(data);
+                    console.log($('.user1').attr('class'))
+                    console.log($('.user2').attr('class'))
+                    $('.user1').attr('class')
+                        // if ($('.user1').attr('rid') == d) {
+
+                    // }
+                }
+
                 for (let i = 0; i < data.length; i++) {
+                    for (let j = 0; j < data.length; j++) {
+
+                    }
                     $('.user1').append(data[i].img);
                 }
 
@@ -176,23 +191,26 @@ $(function() {
                 break;
             case '':
                 break;
+            case '':
+                break;
         }
     }
 
+    function addRoom(obj) {
+        obj.click(function() {
+            var rid = $(this).attr('rid')
+            $('.pkk').attr('rid', rid);
+            $('.wrap').hide()
+            $('.pkk').show();
+
+            var objc = {
+                type: 'add',
+                rid: rid,
+                acc: user.acc
+            }
+            ws.send(JSON.stringify(objc));
+        })
+    }
+
+
 })
-
-function addRoom(obj) {
-    obj.click(function() {
-        var rid = $(this).attr('rid')
-        $('.pkk').attr('rid', rid);
-        $('.wrap').hide()
-        $('.pkk').show();
-
-        var obj = {
-            type: 'add',
-            rid: rid,
-            acc: user.acc
-        }
-        ws.send(JSON.stringify(obj));
-    })
-}
