@@ -282,7 +282,14 @@ $(function() {
                 $('.room_list ul').html(str);
                 addRoom($('.room_list li'))
                 break;
-            case '':
+            case 'state':
+                var data = oMsg.data;
+                var ui = sessionStorage.getItem('hx191110_ui');
+                if (ui == 'u1') {
+                    $('.user1').css({ 'border-radius': '50%' })
+                } else if (ui == 'u2') {
+                    $('.user2').css({ 'border-radius': '50%' })
+                }
                 break;
             case '':
                 break;

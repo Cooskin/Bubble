@@ -612,7 +612,6 @@ wss.on('connection', function(socket) {
                     stateArr.push(oSt);
                 }
                 for (let i = 0; i < stateArr.length; i++) {
-
                     if (stateArr[i].rid == oMsg.rid && stateArr[i].data.acc == oData.acc) {
                         stateArr.splice(i, 1, oSt);
                         con = 0;
@@ -622,9 +621,29 @@ wss.on('connection', function(socket) {
                     stateArr.push(oSt);
                 }
 
-
                 // 准备反馈
+                for (let i = 0; i < stateArr.length; i++) {
+                    if (stateArr[i].rid == oMsg.rid) {
+                        var obj = {
+                            type: 'state',
+                            data: {
+                                ui: stateArr[i].data.ui,
+                                state: stateArr[i].data.state,
+                            }
+                        }
+                        for (let j = 0; j < gameSocket.length; j++) {
+                            // for (let k = 0; k < stateArr.length; k++) {
+                            if (gameSocket[j].acc == stateArr[i].data.acc) {
+                                console.log(stateArr)
+                                gameSocket[j].socketd.send(JSON.stringify(obj));
+                            }
+                            // }
+                        }
+                    }
+                }
 
+
+                // 准备开始
                 var rw = 0
                 for (let i = 0; i < stateArr.length; i++) {
 
@@ -633,21 +652,42 @@ wss.on('connection', function(socket) {
                     }
                 }
                 if (rw == 2) {
-                    console.log('all ready')
+                    console.log('all ready');
+                    var sql = `update tblroom set state = '准备' where roomid = ?`;
+                    db.run(sql, [oMsg.rid], function(e) {
+                        if (e == null) {
+                            // 刷新列表
+                            var sql3 = `select * from tblroom`;
+                            db.all(sql3, [], function(er, data2) {
+                                    if (er == null) {
+                                        var obj = {
+                                            type: 'reroom',
+                                            rid: oMsg.rid,
+                                            data: data2
+                                        }
+
+                                        for (let i = 0; i < gameSocket.length; i++) {
+                                            gameSocket[i].socketd.send(JSON.stringify(obj));
+                                        }
+                                    }
+                                })
+                                // 开始倒计时
+                            var obj = {
+                                type: 'ready',
+                                game: 1
+                            }
+                            for (let j = 0; j < gameSocket.length; j++) {
+                                for (let i = 0; i < stateArr.length; i++) {
+                                    if (gameSocket[j].acc == stateArr[i].data.acc) {
+                                        gameSocket[j].socketd.send(JSON.stringify(obj));
+                                    }
+                                }
+
+                            }
+                        }
+                    })
                 }
-                // var sql = `select * from tblroom where roomid = ?`;
-                // db.get(sql, [oMsg.rid], function(e, data) {
-                //     if (e == null) {
-                //         var userarr = [data.user1acc, data.user2acc]
-                // if (data.user1acc == 0) {
-                // var sql2 = `update tblroom set user1acc = ? where roomid = ?`;
-                // userarr.splice(0, 1, oMsg.acc)
-                // } else if (data.user2acc == 0) {
-                // var sql2 = `update tblroom set user2acc = ? where roomid = ?`;
-                // userarr.splice(1, 1, oMsg.acc)
-                // }
-                //     }
-                // })
+
                 break;
             case 'close':
                 for (let i = 0; i < stateArr.length; i++) {
