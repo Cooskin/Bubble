@@ -14,6 +14,8 @@ console.log('服务器 f')
 
 var socketAry = [];
 var gameSocket = [];
+var stateArr = [];
+
 
 wss.on('connection', function(socket) {
     socket.on('message', function(msg) {
@@ -421,6 +423,7 @@ wss.on('connection', function(socket) {
                     if (e == null) {
                         var obj = {
                             type: 'ruser',
+                            user: 'user1',
                             data: data2
                         }
                         socket.send(JSON.stringify(obj));
@@ -456,7 +459,6 @@ wss.on('connection', function(socket) {
                  */
             case 'clsroom':
 
-                // if()
                 var sql3 = `select user1acc,user2acc 
                             from tblroom 
                             where roomid = ?`;
@@ -498,7 +500,7 @@ wss.on('connection', function(socket) {
                                     type: 'reroom',
                                     data: data
                                 }
-
+                                console.log(obj)
                                 for (let i = 0; i < gameSocket.length; i++) {
                                     gameSocket[i].socketd.send(JSON.stringify(obj));
                                 }
@@ -506,6 +508,12 @@ wss.on('connection', function(socket) {
                         })
                     }
                 })
+                for (let i = 0; i < stateArr.length; i++) {
+                    if (stateArr[i].data.acc == oMsg.user) {
+                        stateArr.splice(i, 1);
+                    }
+                }
+                console.log(stateArr)
 
                 break;
             case 'add':
@@ -536,18 +544,17 @@ wss.on('connection', function(socket) {
                                 var key;
 
                                 for (let i = 0; i < userarr.length; i++) {
-                                    if (i == 0) {
-                                        key = 'user1acc';
-                                    } else if (i == 1) {
-                                        key = 'user2acc';
-                                    }
+
                                     db.all(sql4, [userarr[i]], function(e, data1) {
                                         if (e == null) {
 
-
+                                            if (i == 0) {
+                                                key = 'user1';
+                                            } else if (i == 1) {
+                                                key = 'user2';
+                                            }
                                             var p = {
                                                 acc: userarr[i],
-                                                // user: i,
                                                 user: key,
                                                 data: data1
                                             }
@@ -557,18 +564,14 @@ wss.on('connection', function(socket) {
                                             var obj = {
                                                 type: 'ruser',
                                                 rid: oMsg.rid,
-                                                userarr: userarr,
                                                 data: arr
                                             }
                                             if (flag) {
                                                 for (let i = 0; i < gameSocket.length; i++) {
-                                                    console.log(obj)
                                                     gameSocket[i].socketd.send(JSON.stringify(obj));
-
                                                 }
                                             }
                                             flag += 1
-                                                // socket.send(JSON.stringify(obj));
                                         }
                                     })
 
@@ -596,6 +599,62 @@ wss.on('connection', function(socket) {
                 })
 
 
+                break;
+
+            case 'state':
+                var oData = oMsg.data;
+                var con = 1;
+                var oSt = {
+                    rid: oMsg.rid,
+                    data: oData,
+                }
+                if (stateArr.length == 0) {
+                    stateArr.push(oSt);
+                }
+                for (let i = 0; i < stateArr.length; i++) {
+
+                    if (stateArr[i].rid == oMsg.rid && stateArr[i].data.acc == oData.acc) {
+                        stateArr.splice(i, 1, oSt);
+                        con = 0;
+                    }
+                }
+                if (con) {
+                    stateArr.push(oSt);
+                }
+
+
+                // 准备反馈
+
+                var rw = 0
+                for (let i = 0; i < stateArr.length; i++) {
+
+                    if (stateArr[i].rid == oMsg.rid && stateArr[i].data.state == 'ready') {
+                        rw += 1;
+                    }
+                }
+                if (rw == 2) {
+                    console.log('all ready')
+                }
+                // var sql = `select * from tblroom where roomid = ?`;
+                // db.get(sql, [oMsg.rid], function(e, data) {
+                //     if (e == null) {
+                //         var userarr = [data.user1acc, data.user2acc]
+                // if (data.user1acc == 0) {
+                // var sql2 = `update tblroom set user1acc = ? where roomid = ?`;
+                // userarr.splice(0, 1, oMsg.acc)
+                // } else if (data.user2acc == 0) {
+                // var sql2 = `update tblroom set user2acc = ? where roomid = ?`;
+                // userarr.splice(1, 1, oMsg.acc)
+                // }
+                //     }
+                // })
+                break;
+            case 'close':
+                for (let i = 0; i < stateArr.length; i++) {
+                    if (stateArr[i].data.acc == oMsg.acc) {
+                        stateArr.splice(i, 1);
+                    }
+                }
                 break;
             case 'arr':
                 // allImage   hastImage   wingImage
