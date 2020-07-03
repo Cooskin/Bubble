@@ -24,7 +24,7 @@ $('.game').click(function() {
     }
     ws.send(JSON.stringify(obj));
 
-    location.href = 'game.html';
+    location.href = 'room.html';
 })
 
 

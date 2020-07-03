@@ -633,10 +633,10 @@ wss.on('connection', function(socket) {
                         }
                         for (let j = 0; j < gameSocket.length; j++) {
                             // for (let k = 0; k < stateArr.length; k++) {
-                            if (gameSocket[j].acc == stateArr[i].data.acc) {
-                                console.log(stateArr)
-                                gameSocket[j].socketd.send(JSON.stringify(obj));
-                            }
+                            // if (gameSocket[j].acc == stateArr[i].data.acc) {
+                            //     console.log(obj)
+                            gameSocket[j].socketd.send(JSON.stringify(obj));
+                            // }
                             // }
                         }
                     }
@@ -659,19 +659,20 @@ wss.on('connection', function(socket) {
                             // 刷新列表
                             var sql3 = `select * from tblroom`;
                             db.all(sql3, [], function(er, data2) {
-                                    if (er == null) {
-                                        var obj = {
-                                            type: 'reroom',
-                                            rid: oMsg.rid,
-                                            data: data2
-                                        }
-
-                                        for (let i = 0; i < gameSocket.length; i++) {
-                                            gameSocket[i].socketd.send(JSON.stringify(obj));
-                                        }
+                                if (er == null) {
+                                    var obj = {
+                                        type: 'reroom',
+                                        rid: oMsg.rid,
+                                        data: data2
                                     }
-                                })
-                                // 开始倒计时
+
+                                    for (let i = 0; i < gameSocket.length; i++) {
+                                        gameSocket[i].socketd.send(JSON.stringify(obj));
+                                    }
+                                }
+                            })
+
+                            // 开始倒计时
                             var obj = {
                                 type: 'ready',
                                 game: 1
