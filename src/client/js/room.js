@@ -124,6 +124,7 @@ $(function() {
             }
 
         }
+        console.log(obj)
         ws.send(JSON.stringify(obj));
 
     })
@@ -153,15 +154,14 @@ $(function() {
 
     ws.onmessage = function(msg) {
         var oMsg = JSON.parse(msg.data);
+
         switch (oMsg.type) {
 
             case 'roomlist':
                 var data = oMsg.data;
-                console.log(data)
                 var str = ``;
                 for (let i = 0; i < data.length; i++) {
                     var num = 1;
-                    console.log(data[i].user2acc)
                     if (data[i].user1acc != 0 && data[i].user2acc) {
                         num = 2;
                     }
@@ -174,14 +174,12 @@ $(function() {
                         </div>
                     </li>`;
                 }
-                // console.log(str)
                 $('.room_list ul').html(str);
                 addRoom($('.room_list li'))
 
                 break;
 
             case 'room':
-                console.log(oMsg)
                 var data = oMsg.data;
                 var str = ``;
                 for (let i = 0; i < data.length; i++) {
@@ -197,12 +195,13 @@ $(function() {
                             <em class="num">` + num + `</em><em>/2</em>
                         </div>
                     </li>`;
+                    if (data[i].user1acc == user.acc && $('.pkk').attr('rid') == undefined) {
+                        $('.pkk').attr('rid', oMsg.rid)
+                    }
                 }
 
                 $('.room_list ul').html(str);
-                addRoom($('.room_list li'))
-
-                $('.pkk').attr('rid', oMsg.rid);
+                addRoom($('.room_list li'));
                 break;
             case 'ruser':
                 var data = oMsg.data;
@@ -212,25 +211,24 @@ $(function() {
                     if (data[0].user != undefined) {
                         var ui = 0;
                         for (let i = 0; i < data.length; i++) {
-                            console.log(data[i].user)
 
                             if (data[i].user == 'user1') {
                                 $('.user1').html('')
+
                                 for (let j = 0; j < data[i].data.length; j++) {
                                     $('.user1').append(data[i].data[j].img);
                                 }
-
                             } else if (data[i].user == 'user2') {
                                 $('.user2').html('')
-                                for (let j = 0; j < data[i].data.length; j++) {
-                                    $('.user2').append(data[i].data[j].img);
+
+                                for (let k = 0; k < data[i].data.length; k++) {
+                                    $('.user2').append(data[i].data[k].img);
                                 }
                                 if (user.acc == data[i].acc) {
                                     ui += 1;
                                 }
                             }
                         }
-                        console.log(ui);
                         if (ui) {
                             sessionStorage.setItem('hx191110_ui', 'u2');
                             $('.user1').attr('ui', 'u1');
@@ -269,28 +267,32 @@ $(function() {
                             <em class="num">` + num + `</em><em>/2</em>
                         </div>
                     </li>`;
+
                     if (data[i].user1acc == 0) {
                         $('.user1').html('');
                     }
                     if (data[i].user2acc == 0) {
                         $('.user2').html('');
                     }
+
                 }
-
-
 
                 $('.room_list ul').html(str);
                 addRoom($('.room_list li'))
                 break;
             case 'state':
                 var data = oMsg.data;
-                // var ui = sessionStorage.getItem('hx191110_ui');
-                // if (ui == 'u1') {
-                //     $('.user1').css({ 'border-radius': '50%' })
-                // } else if (ui == 'u2') {
-                //     $('.user2').css({ 'border-radius': '50%' })
-                // }
-                console.log(data);
+                var ui = sessionStorage.getItem('hx191110_ui');
+                console.log(data)
+                if (data.ui == 'u1' && data.state == 'ready') {
+                    $('.user1').css({ 'border-radius': '50%' })
+                } else if (data.ui == 'u2' && data.state == 'ready') {
+                    $('.user2').css({ 'border-radius': '50%' })
+                } else if (data.ui == 'u1' && data.state == 'wait') {
+                    $('.user1').css({ 'border-radius': '0%' })
+                } else if (data.ui == 'u2' && data.state == 'wait') {
+                    $('.user2').css({ 'border-radius': '0%' })
+                }
                 for (let i = 0; i < data.length; i++) {
 
                 }

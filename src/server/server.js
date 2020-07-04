@@ -500,7 +500,6 @@ wss.on('connection', function(socket) {
                                     type: 'reroom',
                                     data: data
                                 }
-                                console.log(obj)
                                 for (let i = 0; i < gameSocket.length; i++) {
                                     gameSocket[i].socketd.send(JSON.stringify(obj));
                                 }
@@ -516,11 +515,15 @@ wss.on('connection', function(socket) {
                 console.log(stateArr)
 
                 break;
+
+                /**
+                 * 加入房间
+                 */
             case 'add':
                 var sql = `select * from tblroom where roomid = ?`;
                 db.get(sql, [oMsg.rid], function(e, data) {
                     if (e == null) {
-                        var userarr = [data.user1acc, data.user2acc]
+                        var userarr = [data.user1acc, data.user2acc];
 
                         if (data.user1acc == 0) {
                             var sql2 = `update tblroom set user1acc = ? where roomid = ?`;
@@ -529,8 +532,9 @@ wss.on('connection', function(socket) {
                             var sql2 = `update tblroom set user2acc = ? where roomid = ?`;
                             userarr.splice(1, 1, oMsg.acc)
                         }
+
                         db.run(sql2, [oMsg.acc, data.roomid], function(er) {
-                            if (e == null) {
+                            if (er == null) {
 
                                 console.log('加入成功')
 
@@ -545,8 +549,8 @@ wss.on('connection', function(socket) {
 
                                 for (let i = 0; i < userarr.length; i++) {
 
-                                    db.all(sql4, [userarr[i]], function(e, data1) {
-                                        if (e == null) {
+                                    db.all(sql4, [userarr[i]], function(err, data1) {
+                                        if (err == null) {
 
                                             if (i == 0) {
                                                 key = 'user1';
@@ -568,28 +572,63 @@ wss.on('connection', function(socket) {
                                             }
                                             if (flag) {
                                                 for (let i = 0; i < gameSocket.length; i++) {
-                                                    gameSocket[i].socketd.send(JSON.stringify(obj));
+                                                    for (let j = 0; j < userarr.length; j++) {
+                                                        if (gameSocket[i].acc == userarr[j]) {
+                                                            gameSocket[i].socketd.send(JSON.stringify(obj));
+                                                        }
+                                                    }
+
                                                 }
                                             }
-                                            flag += 1
+                                            flag += 1;
+
                                         }
                                     })
 
                                 }
+
+                                // 进入房间时打印玩家准备状态
+                                var sql5 = `select user1acc,user2acc from tblroom where roomid = ?`;
+                                db.get(sql5, [oMsg.rid], function(e, data) {
+                                    if (e == null) {
+                                        if (stateArr != '') {
+                                            for (let i = 0; i < stateArr.length; i++) {
+                                                if (stateArr[i].rid == oMsg.rid) {
+                                                    var obj1 = {
+                                                        type: 'state',
+                                                        data: {
+                                                            ui: stateArr[i].data.ui,
+                                                            state: stateArr[i].data.state,
+                                                        }
+                                                    }
+                                                }
+                                            }
+
+                                            for (let i = 0; i < gameSocket.length; i++) {
+                                                for (j in data) {
+                                                    if (gameSocket[i].acc == data[j]) {
+                                                        gameSocket[i].socketd.send(JSON.stringify(obj1));
+                                                    }
+                                                }
+                                            }
+                                        }
+
+                                    }
+                                })
 
 
                                 // 刷新列表
                                 var sql3 = `select * from tblroom`;
                                 db.all(sql3, [], function(er, data2) {
                                     if (er == null) {
-                                        var obj = {
+                                        var obj3 = {
                                             type: 'reroom',
                                             rid: oMsg.rid,
                                             data: data2
                                         }
 
                                         for (let i = 0; i < gameSocket.length; i++) {
-                                            gameSocket[i].socketd.send(JSON.stringify(obj));
+                                            gameSocket[i].socketd.send(JSON.stringify(obj3));
                                         }
                                     }
                                 })
@@ -621,27 +660,38 @@ wss.on('connection', function(socket) {
                     stateArr.push(oSt);
                 }
 
-                // 准备反馈
-                for (let i = 0; i < stateArr.length; i++) {
-                    if (stateArr[i].rid == oMsg.rid) {
-                        var obj = {
-                            type: 'state',
-                            data: {
-                                ui: stateArr[i].data.ui,
-                                state: stateArr[i].data.state,
+                var sql2 = `select user1acc,user2acc from tblroom where roomid = ?`;
+                db.get(sql2, [oMsg.rid], function(e, data) {
+                    if (e == null) {
+
+                        // 准备反馈 
+                        console.log(stateArr)
+                        for (let i = 0; i < stateArr.length; i++) {
+                            console.log(stateArr[i])
+                                // console.log(oMsg.rid)
+                            if (stateArr[i].rid == oMsg.rid) {
+                                var obj9 = {
+                                    type: 'state',
+                                    data: {
+                                        ui: stateArr[i].data.ui,
+                                        state: stateArr[i].data.state,
+                                    }
+                                }
+
+                                // 加上房间里两个用户的acc
+                                for (let k = 0; k < gameSocket.length; i++) {
+                                    for (j in data) {
+                                        if (gameSocket[k].acc == data[j]) {
+                                            console.log(obj9)
+                                            gameSocket[k].socketd.send(JSON.stringify(obj9));
+                                        }
+                                    }
+                                }
                             }
                         }
-                        for (let j = 0; j < gameSocket.length; j++) {
-                            // for (let k = 0; k < stateArr.length; k++) {
-                            // if (gameSocket[j].acc == stateArr[i].data.acc) {
-                            //     console.log(obj)
-                            gameSocket[j].socketd.send(JSON.stringify(obj));
-                            // }
-                            // }
-                        }
-                    }
-                }
 
+                    }
+                })
 
                 // 准备开始
                 var rw = 0
@@ -651,6 +701,8 @@ wss.on('connection', function(socket) {
                         rw += 1;
                     }
                 }
+                console.log(rw)
+
                 if (rw == 2) {
                     console.log('all ready');
                     var sql = `update tblroom set state = '准备' where roomid = ?`;
@@ -685,6 +737,27 @@ wss.on('connection', function(socket) {
                                 }
 
                             }
+                        }
+                    })
+                } else {
+                    var sql = `update tblroom set state = '等待' where roomid = ?`;
+                    db.run(sql, [oMsg.rid], function(e) {
+                        if (e == null) {
+                            // 刷新列表
+                            var sql3 = `select * from tblroom`;
+                            db.all(sql3, [], function(er, data2) {
+                                if (er == null) {
+                                    var obj = {
+                                        type: 'reroom',
+                                        rid: oMsg.rid,
+                                        data: data2
+                                    }
+
+                                    for (let i = 0; i < gameSocket.length; i++) {
+                                        gameSocket[i].socketd.send(JSON.stringify(obj));
+                                    }
+                                }
+                            })
                         }
                     })
                 }
