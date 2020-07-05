@@ -6,8 +6,9 @@ var db = new sqlite3.Database('./db/bubble.db', sqlite3.OPEN_READWRITE, function
     }
 })
 
+
 var ws = require('ws');
-const { Socket } = require('dgram');
+// const { Socket } = require('dgram');
 var server = ws.Server;
 var wss = new server({ port: 1711 });
 console.log('服务器 f')
@@ -18,6 +19,12 @@ var stateArr = [];
 
 
 wss.on('connection', function(socket) {
+    var redis = require("redis");
+    var redisCli = redis.createClient();
+
+
+
+
     socket.on('message', function(msg) {
         var oMsg = JSON.parse(msg);
 
@@ -665,10 +672,7 @@ wss.on('connection', function(socket) {
                     if (e == null) {
 
                         // 准备反馈 
-                        console.log(stateArr)
                         for (let i = 0; i < stateArr.length; i++) {
-                            console.log(stateArr[i])
-                                // console.log(oMsg.rid)
                             if (stateArr[i].rid == oMsg.rid) {
                                 var obj9 = {
                                     type: 'state',
@@ -679,10 +683,9 @@ wss.on('connection', function(socket) {
                                 }
 
                                 // 加上房间里两个用户的acc
-                                for (let k = 0; k < gameSocket.length; i++) {
+                                for (let k = 0; k < gameSocket.length; k++) {
                                     for (j in data) {
                                         if (gameSocket[k].acc == data[j]) {
-                                            console.log(obj9)
                                             gameSocket[k].socketd.send(JSON.stringify(obj9));
                                         }
                                     }
@@ -701,7 +704,7 @@ wss.on('connection', function(socket) {
                         rw += 1;
                     }
                 }
-                console.log(rw)
+                // console.log(rw)
 
                 if (rw == 2) {
                     console.log('all ready');
@@ -712,6 +715,7 @@ wss.on('connection', function(socket) {
                             var sql3 = `select * from tblroom`;
                             db.all(sql3, [], function(er, data2) {
                                 if (er == null) {
+
                                     var obj = {
                                         type: 'reroom',
                                         rid: oMsg.rid,
@@ -725,18 +729,82 @@ wss.on('connection', function(socket) {
                             })
 
                             // 开始倒计时
-                            var obj = {
-                                type: 'ready',
-                                game: 1
-                            }
-                            for (let j = 0; j < gameSocket.length; j++) {
-                                for (let i = 0; i < stateArr.length; i++) {
-                                    if (gameSocket[j].acc == stateArr[i].data.acc) {
-                                        gameSocket[j].socketd.send(JSON.stringify(obj));
+
+                            // console.log(map1)
+                            var sql = `select map from tblroom where roomid = ?`;
+                            db.get(sql, [oMsg.rid], function(e, data) {
+                                if (e == null) {
+                                    // console.log(data)
+
+                                    switch (data.map) {
+                                        case 1:
+                                            redisCli.get('map_1', function(e, data) {
+                                                var obj = {
+                                                    type: 'ready',
+                                                    map: JSON.parse(data),
+                                                    game: 1
+                                                }
+                                                for (let j = 0; j < gameSocket.length; j++) {
+                                                    for (let i = 0; i < stateArr.length; i++) {
+                                                        if (gameSocket[j].acc == stateArr[i].data.acc) {
+                                                            gameSocket[j].socketd.send(JSON.stringify(obj));
+                                                        }
+                                                    }
+                                                }
+                                            });
+
+                                            break;
+                                        case 2:
+                                            redisCli.get('map_2', function(e, data) {
+                                                var obj = {
+                                                    type: 'ready',
+                                                    map: JSON.parse(data),
+                                                    game: 1
+                                                }
+                                                for (let j = 0; j < gameSocket.length; j++) {
+                                                    for (let i = 0; i < stateArr.length; i++) {
+                                                        if (gameSocket[j].acc == stateArr[i].data.acc) {
+                                                            gameSocket[j].socketd.send(JSON.stringify(obj));
+                                                        }
+                                                    }
+                                                }
+                                            });
+                                            break;
+                                        case 3:
+                                            redisCli.get('map_3', function(e, data) {
+                                                var obj = {
+                                                    type: 'ready',
+                                                    map: JSON.parse(data),
+                                                    game: 1
+                                                }
+                                                for (let j = 0; j < gameSocket.length; j++) {
+                                                    for (let i = 0; i < stateArr.length; i++) {
+                                                        if (gameSocket[j].acc == stateArr[i].data.acc) {
+                                                            gameSocket[j].socketd.send(JSON.stringify(obj));
+                                                        }
+                                                    }
+                                                }
+                                            });
+                                            break;
+                                        case 4:
+                                            redisCli.get('map_4', function(e, data) {
+                                                var obj = {
+                                                    type: 'ready',
+                                                    map: JSON.parse(data),
+                                                    game: 1
+                                                }
+                                                for (let j = 0; j < gameSocket.length; j++) {
+                                                    for (let i = 0; i < stateArr.length; i++) {
+                                                        if (gameSocket[j].acc == stateArr[i].data.acc) {
+                                                            gameSocket[j].socketd.send(JSON.stringify(obj));
+                                                        }
+                                                    }
+                                                }
+                                            });
+                                            break;
                                     }
                                 }
-
-                            }
+                            })
                         }
                     })
                 } else {

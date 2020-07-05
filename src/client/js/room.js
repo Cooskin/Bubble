@@ -115,16 +115,16 @@ $(function() {
         var $state = $(this).attr('state');
 
         var obj = {
-            type: 'state',
-            rid: $rid,
-            data: {
-                state: $state,
-                acc: user.acc,
-                ui: ui
-            }
+                type: 'state',
+                rid: $rid,
+                data: {
+                    state: $state,
+                    acc: user.acc,
+                    ui: ui
+                }
 
-        }
-        console.log(obj)
+            }
+            // console.log(obj)
         ws.send(JSON.stringify(obj));
 
     })
@@ -283,7 +283,7 @@ $(function() {
             case 'state':
                 var data = oMsg.data;
                 var ui = sessionStorage.getItem('hx191110_ui');
-                console.log(data)
+
                 if (data.ui == 'u1' && data.state == 'ready') {
                     $('.user1').css({ 'border-radius': '50%' })
                 } else if (data.ui == 'u2' && data.state == 'ready') {
@@ -295,6 +295,25 @@ $(function() {
                 }
                 for (let i = 0; i < data.length; i++) {
 
+                }
+                break;
+            case 'ready':
+                console.log(oMsg);
+                if (oMsg.game) {
+                    $('.shade').show();
+                    var secNum = 5;
+                    var timer = setInterval(function() {
+                        if (secNum == 0) {
+                            clearInterval(timer);
+                            $('.pkk').hide();
+                            $('.game').show();
+                            maps(oMsg.map);
+                        } else {
+                            var bgUrl = "./images/game/game-num/" + secNum + ".png"
+                            $('.shade').css('background-image', 'url(' + bgUrl + ')')
+                            secNum--;
+                        }
+                    }, 1000)
                 }
                 break;
             case '':

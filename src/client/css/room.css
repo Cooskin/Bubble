@@ -213,6 +213,18 @@
     display: none;
 }
 
+.shade {
+    width: 100%;
+    height: 100%;
+    display: none;
+    background-color: rgba(0, 0, 0, 0.6);
+    /* background-size: ; */
+    background-repeat: no-repeat;
+    background-position: 50%;
+    position: absolute;
+    z-index: 99;
+}
+
 #cont {
     width: 720px;
     height: 532px;
